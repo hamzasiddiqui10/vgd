@@ -244,3 +244,36 @@ No Strategy
 
 - note: Video recording strategy similar to our multi-camera setup
 - note: Many generalization flavors can be tested using this dataset but there still seems to be room for our idea to help with object bias.
+
+
+
+
+
+
+## ${\color{yellow} * }$ EPIC-Kitchens-100 UDA challenge - Rescaling Egocentric Vision: Collection Pipeline and Challenges for EPIC-KITCHENS-100
+
+<details> 
+  
+- EPIC-Kitchens-100 UDA challenge: Models are trained on EPIC-55 footage and adapted to the unlabelled EK-100 extension, so environment and time shift together. The same paper defines the “test of time” protocol, measuring whether models degrade on footage collected two years later.
+- IJCV 2022: https://arxiv.org/abs/2006.13256
+
+### Basics:
+
+* **Base Dataset(s):** EPIC-KITCHENS-55 (extended to EPIC-KITCHENS-100)
+* **Dataset Scale:** 100 hours, 20,000,000 frames, and 89,977 action segments across 700 videos.
+* **Classes:** 97 verb classes and 300 noun classes, forming fine-grained action combinations (Human-Object Interaction (HOI)).
+* **Example Classes:** Verbs: take, put, wash, cut. Nouns: plate, pan, knife, spoon.
+
+#### Domain Shift Tested (across unseen environments, unseen humans, temporal drifts)
+
+Evaluates domain shift through cross-environment generalization, participant variation, and temporal drift ("test of time" shift between 2018 and 2020 recordings). It also provides an Unsupervised Domain Adaptation benchmark testing models trained on a subset of kitchen environments against unseen target kitchens.
+
+#### Non-Object Shift Suitability
+
+It provides a valuable benchmark for egocentric non-object shifts, specifically changes in personal kitchen environments, background layouts, camera movement, lighting conditions, and mounting positions across 45 distinct unscripted homes. This helps measure how models handle real-world environmental and viewpoint variance from a first-person perspective.
+
+#### Verb / Motion Gap Filled (+++)
+
+Although the dataset tracks 97 verbs, action labels remain heavily coupled with specific kitchen objects (300 noun classes). Consequently, models often exploit static object shortcuts rather than temporal motion dynamics. Our new 1000+ clip dataset fills this gap by decoupling actions from specific objects, isolating pure motion patterns, and forcing models to prioritize temporal kinematic movement over static spatial context.
+
+</details>
