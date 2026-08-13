@@ -106,3 +106,52 @@ The protocol uses top-1 accuracy on verb classification to assess whether a mode
 </details>
 
 note: "Code and data" link from abstract page is not working!
+
+
+
+## Something-Else: Compositional Action Recognition with Spatial-Temporal Interaction Networks
+
+<details>
+
+### Basics:
+
+* **Base Dataset(s):** Something-Something V2 (SSv2).
+* **Dataset Scale:** 112,795 video clips total (54,919 training clips, 57,876 testing clips; total hours: Not reported).
+* **Classes:** 174 unique classes (Human-Object Interaction (HOI)).
+* **Example Classes:** "Pushing something so that it falls off the table", "Moving something and something closer to each other", "Covering something with something", "Tearing something into two pieces".
+
+
+#### A new network introduced by authors using BBox annotated ssv2 dataset
+The **Spatial-Temporal Interaction Network (STIN)**, a model designed to focus on *how* objects move and interact rather than *what* those objects look like.
+
+Instead of analyzing an entire video frame at once, the model relies on hand and object bounding box annotations. It tracks these boxes over time and extracts two key streams of information:
+
+1. **Geometric/Spatial Trajectories:** It calculates geometric relationships—such as the relative positions, distances, and trajectory paths between the actor's hands and the objects. This allows the model to recognize motion patterns (e.g., "moving two things closer") regardless of what the objects actually are.
+2. **Visual/Feature Representations:** It extracts visual features from inside those object bounding boxes using ROI-pooling to capture physical state changes (e.g., an object breaking or bending).
+
+For actions without clear hand-object interactions, the model falls back on a standard scene-level 3D convolutional network (like 3D ResNet). By combining geometric motion reasoning with localized object features, the network learns the underlying **verb** dynamics, allowing it to correctly identify actions even when performed with completely unfamiliar objects.
+
+#### Domain Shift Tested (Unique to this paper have not seen yet)
+
+Generalization is defined as compositional OOD transfer, evaluating whether a model can decouple action verbs from specific objects. The exact domain shift tested is a compositional split where the training and testing sets share the same set of action verbs and object categories, but contain completely non-overlapping verb-noun combinations. Models are required to classify actions on novel verb-object pairings that were never observed during training, testing compositional reasoning over spatial-temporal interactions.
+
+#### Evaluation Protocol
+
+The protocol evaluates compositional generalization across 174 categories using 55k training clips and 58k testing clips. Performance is measured using Top-1 and Top-5 classification acc. under a zero-shot split. The paper also includes a few-shot compositional evaluation protocol (1-shot and 5-shot) on base and novel categories to test rapid adaptation. Performance is evaluated under two distinct conditions: using human-annotated ground-truth bounding boxes for hands and objects, and using predictions from automated object detectors and trackers.
+
+#### Non-Object Shift Suitability (does work for object bias)
+
+This dataset focuses entirely on compositional action-object shifts rather than explicit environmental or sensor domain shifts. Although crowdsourced clips contain natural variations in background scenes and lighting, Something-Else does not systematically isolate or control these factors. Without explicit splits for testing egocentric versus exocentric viewpoints, lighting variations, or background changes, this benchmark CANNOT directly evaluate non-object environmental domain generalization within our test suite.
+
+#### Verb / Motion Gap Filled
+
+While Something-Else decouples verbs from nouns via compositional splits, visual object appearance context still heavily influence predictions. It leaves a gap in evaluating pure temporal motion dynamics independent of visual appearance. Our new 1000+ clip dataset addresses this gap by capturing controlled, motion-centric actions that minimize object appearance cues, directly targeting object bias through prioritized verb representations.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+
+</details>
+
+
+
