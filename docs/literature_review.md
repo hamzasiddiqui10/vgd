@@ -159,3 +159,46 @@ No Strategy
 
 
 
+
+
+
+
+## RareAct: A Video Dataset of Unusual Interactions
+
+<details>
+
+- RareAct: Manually annotated clips of unlikely verb-noun compositions such as blend phone, cut keyboard or microwave shoes, with hard negatives that share either the verb or the noun. Targets compositionality for rare human-object interactions that large datasets systematically omit.
+- arXiv 2020 https://arxiv.org/abs/2008.01018
+  
+### Basics:
+
+* **Base Dataset(s):** HowTo100M (used as the large-scale instructional text corpus to identify rarely co-occurring verb-noun pairs).
+* **Dataset Scale:** 905 total videos, 7,607 annotated video clips (10-second clip length, containing 1,765 positive clips).
+* **Classes:** 122 unique classes (Human-Object Interaction (HOI))
+* **Example Classes:** blend phone, cut keyboard, microwave shoes, drill laptop, wash rock. (verb-noun combinations that almost never occured in labels of HowTo100m dataset)
+
+#### Domain Shift Tested
+
+Generalization is defined as zero-shot and few-shot compositional generalization to rare, out-of-distribution verb-noun combinations. The domain shift explicitly evaluates model recognition capabilities when individual action verbs (e.g., blend, cut, microwave) and object nouns (e.g., phone, keyboard, shoes) appear frequently in training data on their own, but are combined into highly unusual, unobserved pairings that rarely or never cooccur in standard video-text pretraining corpus.
+
+Zero-shot compositionality tests whether a model trained on common pairs (like "cut paper", "cut apple", "type on keyboard") can correctly identify an unlikely pair ("cut keyboard") without ever having seen a single video of that specific combination during training. If a model has true compositionality, it can recognize the motion verb anywhere, regardless of how weird/unexpected the object is.
+
+
+#### Evaluation Protocol
+
+The evaluation protocol measures zero-shot compositionality transfer using mean weighted average precision (mWAP) and mean subsampled average precision (mSAP) across 122 action classes. These specialized metrics compensate for visual redundancy and sample weighting when multiple clips originate from the same web video. Models are evaluated with and without structured hard negative samples, which include video clips where only the verb occurs, only the noun occurs, or both appear without the action being performed.
+
+#### Non-Object Shift Suitability (not focused on this but does this regardless)
+
+RareAct does NOT explicitly annotate physical non-object domain shifts such as controlled lighting variations, systematic viewpoint transformations, egocentric versus exocentric viewpoint shifts, or environmental perturbations. However, because its video clips are harvested from unconstrained web sources, the benchmark naturally incorporates diverse background environments, unscripted camera motions, and real-world lighting conditions. Nevertheless, its primary focus remains compositional semantic shift rather than controlled physical non-object shifts.
+
+#### Verb / Motion Gap Filled (++)
+
+Although RareAct effectively breaks standard semantic co-occurrence priors by pairing actions with unexpected objects, its action classes remain tied to specific physical object nouns. As a result, action recognition models can still heavily rely on static visual object appearance rather than understanding temporal motion patterns. Our new 1000+ clip dataset directly fills this gap by focusing on pure verbs and motion dynamics across varying contexts, isolating temporal trajectories to mitigate spatial object bias.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+</details>
+
+
