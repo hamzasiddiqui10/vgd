@@ -1,6 +1,6 @@
 # Literature Review: Video Action Generalization
 
-## EPIC-Kitchens D1/D2/D3: Multi-Modal Domain Adaptation for Fine-Grained Action Recognition
+## ${\color{green} * }$ EPIC-Kitchens D1/D2/D3: Multi-Modal Domain Adaptation for Fine-Grained Action Recognition
 <details> 
   
 - EPIC-Kitchens D1/D2/D3: Three kitchens from EPIC-Kitchens-55 treated as separate domains over 8 verb classes, yielding 6 source→target pairs.
@@ -60,7 +60,7 @@ The concept that different modalities carry different levels of domain invarianc
 
 
 
-## ARGO1M: What can a cook in Italy teach a mechanic in India? Action Recognition Generalisation Over Scenarios and Locations
+## ${\color{green} * }$ ARGO1M: What can a cook in Italy teach a mechanic in India? Action Recognition Generalisation Over Scenarios and Locations
 
 <details>
   
@@ -110,7 +110,7 @@ note: "Code and data" link from abstract page is not working!
 
 
 
-## Something-Else: Compositional Action Recognition with Spatial-Temporal Interaction Networks
+## ${\color{green} * }$ Something-Else: Compositional Action Recognition with Spatial-Temporal Interaction Networks
 
 <details>
 
@@ -163,7 +163,7 @@ No Strategy
 
 
 
-## RareAct: A Video Dataset of Unusual Interactions
+## ${\color{green} * }$ RareAct: A Video Dataset of Unusual Interactions
 
 <details>
 
@@ -202,7 +202,7 @@ No Strategy
 </details>
 
 
-## Ego-Exo4D: Understanding Skilled Human Activity from First- and Third-Person Perspectives
+## ${\color{green} * }$ Ego-Exo4D: Understanding Skilled Human Activity from First- and Third-Person Perspectives
 
 <details>
 
