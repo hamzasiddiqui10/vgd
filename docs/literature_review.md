@@ -202,3 +202,45 @@ No Strategy
 </details>
 
 
+## Ego-Exo4D: Understanding Skilled Human Activity from First- and Third-Person Perspectives
+
+<details>
+
+- Ego-Exo4D:  1,286 hours of simultaneously captured egocentric and exocentric video of skilled activities (sports, music, dance, cooking, bike repair) from 740 participants across 123 scenes in 13 cities.
+- CVPR 2024: https://arxiv.org/abs/2311.18259
+
+### Basics:
+
+* **Base Dataset(s):** Ego-Exo4D (authors' original)
+* **Dataset Scale:** 1,286 hours of combined synchronized video across 740 participants in 123 scene contexts. (truly multimodal: Each video is accompanied by multichannel audio, eye gaze, 3D point clouds, camera poses, IMU, and multiple paired language descriptions, and an "expert commentary")
+* **Classes:** 278 unique classes (Human-Object Interaction (HOI) and physical skilled movement activities spanning 8 domain categories - cooking, music, sports, dance, ...).
+* **Example Classes:** Changing a bike wheel, playing violin, bouldering climbing move, chopping garlic, dribbling a basketball.
+
+#### Domain Shift Tested
+
+The dataset primarily evaluates the domain shift between first-person egocentric camera perspectives (recorded via head-mounted Aria smart glasses) and multi-angle third-person exocentric viewpoints (recorded via stationary GoPro cameras) captured simultaneously. 
+
+In addition to viewpoint shifts, it evaluates cross-environment and cross-subject domain adaptation across 123 natural real-world scene contexts and 13 cities worldwide. 
+
+It also incorporates skill level variations, recording subjects across a spectrum of expertise ranging from absolute novices to proficient experts performing identical tasks.
+
+#### Evaluation Protocol
+
+Generalization performance is measured using a structured suite of benchmark tasks designed for multimodal and multi-view video understanding. The primary protocols include fine-grained keystep recognition (segmenting and classifying sequential task steps), cross-view relation and translation (mapping egocentric features to exocentric viewpoints), proficiency estimation, and 3D body and hand pose recovery. Evaluation setups use cross-view validation (for instance, training on exocentric streams and testing on egocentric streams) evaluated via top-1 classification accuracy, mean average precision (mAP), edit distance, and 3D joint position error metrics.
+
+#### Non-Object Shift Suitability (multiple shifts can be tested using this)
+
+Ego-Exo4D provides a robust benchmark for evaluating non-object domain shifts within video action recognition systems. It isolates drastic perspective variations between dynamic wearable viewpoints and fixed ambient views, allowing researchers to evaluate how model representations transfer across viewpoints. Furthermore, because identical procedural and physical tasks are performed across diverse geographic locations, real-world indoor and outdoor environments, and varying ambient lighting conditions, the dataset effectively benchmarks model robustness against background clutter and scene distribution shifts.
+
+#### Verb / Motion Gap Filled (+++ Still room for our dataset to contribute)
+
+Ego-Exo4D focuses heavily on domain-specific procedural tasks and physical skills that inherently rely on distinct objects and contextual environments, such as bicycle repair tools, musical instruments, or sports equipment. Because these items strongly correlate with specific actions, models can easily achieve high performance by leveraging static object appearance or background features rather than learning genuine temporal motion dynamics. Our new 1000+ clip dataset directly fills this gap by prioritizing verb actions over nouns, isolating temporal motion patterns across varied object and background contexts to evaluate and mitigate object bias.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+  
+</details>
+
+note: Video recording strategy similar to our multi-camera setup
+note: Many generalization flavors can be tested using this dataset but there still seems to be room for our idea to help with object bias.
