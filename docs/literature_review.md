@@ -1,8 +1,8 @@
 # Literature Review: Video Action Generalization
 
-
 ## EPIC-Kitchens D1/D2/D3: Multi-Modal Domain Adaptation for Fine-Grained Action Recognition
-
+<details> 
+  
 - EPIC-Kitchens D1/D2/D3: Three kitchens from EPIC-Kitchens-55 treated as separate domains over 8 verb classes, yielding 6 source→target pairs.
 
 - Multi-Modal Domain Adaptation for Fine-Grained Action Recognition (MM-SADA), CVPR 2020 https://arxiv.org/abs/2001.09691
@@ -31,7 +31,7 @@ Although the paper isolates verb classes across kitchens, the actions remain hea
 
 No Strategy
 
-### Relevant Today
+### Things in paper that remain relevant today
 - Core Thesis: The paper's core thesis—that fine-grained action recognition models overfit to static environment cues (kitchen counter layouts, lighting, specific appliances) rather than learning pure action dynamics—remains a central challenge in computer vision.
 
 - Multi-Modal Disentanglement (Appearance vs. Motion):
@@ -39,22 +39,21 @@ The concept that different modalities carry different levels of domain invarianc
 
 - Benchmark in this paper: The cross-kitchen transfer benchmark (D1, D2, D3) established in this paper remains a widely recognized evaluation protocol for fine-grained action generalization in egocentric vision.
 
-### Outdated
+### Things in paper that are outdated
 
-While the underlying problem remains identical, the modeling archs have evolved drastically
-
-- Adversarial Alignment vs. Contrastive / Self-Supervised Adaptation
+#### Adversarial Alignment vs. Contrastive / Self-Supervised Adaptation
 
 * **2020 Approach (MM-SADA):** Relied on domain discriminators and adversarial loss (GRL-style) to force feature alignment between source and target domains.
 * **Modern Shift:** Adversarial UDA is largely superseded by **contrastive learning** (e.g., InfoNCE, CLIP-style joint text-video alignment), **masked video autoencoders (VideoMAE)**, and **feature disentanglement networks**. Modern approaches focus on learning domain-invariant representation spaces directly rather than training unstable min-max discriminators.
 
-- Explicit Optical Flow vs. Vision Transformers (Modern ViT don't require Optical Flow)
+#### Explicit Optical Flow vs. Vision Transformers (Modern ViT don't require Optical Flow)
 
 * **2020 Approach:** Required dense Optical Flow calculation as a explicit second modality alongside RGB.
 * **Modern Shift:** Spatiotemporal Vision Transformers (ViTs, TimeSformer, VideoMAE) extract temporal motion dynamics directly from raw video frames without requiring computationally expensive pre-computed optical flow.
 
-- UDA (Unsupervised Domain Adaptation) vs. DG (Domain Generalization)
+#### UDA (Unsupervised Domain Adaptation) vs. DG (Domain Generalization)
 
 * **2020 Approach:** UDA assumes access to unlabeled target-domain videos during training.
 * **Modern Shift:** Real-world deployment favors **Domain Generalization (DG)** or **Test-Time Adaptation (TTA)**, where the model must generalize to unseen target environments without needing unlabeled training samples beforehand. (This is what we discussed on 12.08.2026)
 
+</details>
