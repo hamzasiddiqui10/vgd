@@ -57,3 +57,42 @@ The concept that different modalities carry different levels of domain invarianc
 * **Modern Shift:** Real-world deployment favors **Domain Generalization (DG)** or **Test-Time Adaptation (TTA)**, where the model must generalize to unseen target environments without needing unlabeled training samples beforehand. (This is what we discussed on 12.08.2026)
 
 </details>
+
+
+
+## ARGO1M: What can a cook in Italy teach a mechanic in India? Action Recognition Generalisation Over Scenarios and Locations
+
+<details>
+
+- ARGO1M:  1.1M clips from Ego4D spanning 10 scenarios and 13 geographic locations, with 10 test splits that each pair an unseen scenario with an unseen location.
+
+- ICCV 2023:  https://arxiv.org/abs/2306.08713
+
+  
+### Basics:
+
+* **Base Dataset(s):** Ego4D (curated into the ARGO1M benchmark).
+* **Dataset Scale:** 1.1 million video clips. Total video hours: Not reported.
+* **Classes:** 60 unique classes (Human-Object Interaction and Motion-based activity).
+* **Example Classes:** Open, wash, take, put, adjust.
+
+#### Domain Shift Tested (cross-environment)
+
+Generalization is defined as the capability of an action recognition model to classify egocentric human actions when performed across dual domain shifts: novel activity scenarios and unseen geographical locations. Models are trained on specific activity domains and evaluated on test splits comprising unobserved activity scenarios recorded in distinct geographical regions (for example, transferring learned actions from daily cooking in Italy all the way to vehicle repair in India) (washing a plate with kitchen background to washing a tyre in repair-shop background).
+
+#### Non-Object Shift Suitability (environment shifts)
+
+The dataset provides an effective testbed for non-object domain shifts by evaluating background environments, recording setups, and geographical contexts. Incorporating this benchmark into our test suite allows us to evaluate how robustly models adapt to drastic changes in scene appearance, lighting, and ambient surroundings across different global environments while keeping action definitions constant.
+
+#### Verb / Motion Gap Filled +++
+
+While ARGO1M categorizes videos using verb labels, its real-world egocentric clips from Ego4D still feature strong correlations between actions, background environments, and specific co-occurring objects (such as kitchen utensils or mechanical tools). As a result, models can rely on static visual object shortcuts rather than temporal motion. Our new 1000+ clip dataset addresses this gap by isolating pure temporal motion dynamics, stripping away object cues to directly target object bias and prioritize verb recognition.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+
+
+</details>
+
+note: Code and data link from abstract page not working!
