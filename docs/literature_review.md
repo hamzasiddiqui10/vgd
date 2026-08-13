@@ -63,6 +63,7 @@ The concept that different modalities carry different levels of domain invarianc
 ## ARGO1M: What can a cook in Italy teach a mechanic in India? Action Recognition Generalisation Over Scenarios and Locations
 
 <details>
+  
 - "ARGO1M" = Action Recognition Generalisation Over scenarios and locations dataset
 - ARGO1M:  1.1M clips from Ego4D spanning 10 scenarios and 13 geographic locations, with 10 test splits that each pair an unseen scenario with an unseen location.
 
@@ -112,6 +113,9 @@ note: "Code and data" link from abstract page is not working!
 ## Something-Else: Compositional Action Recognition with Spatial-Temporal Interaction Networks
 
 <details>
+
+- Something-Else: Re-splits Something-Something V2 so that the verb-noun combinations seen during training never appear at test, and adds dense hand and object box annotations
+- CVPR 2020: https://arxiv.org/abs/1912.09930
 
 ### Basics:
 
