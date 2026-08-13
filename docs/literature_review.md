@@ -1,38 +1,29 @@
 # Literature Review: Video Action Generalization
 
-| Paper Title | Base Dataset | Scale | Classes | Domain Shift Tested | Non-Object Shift Suitability | Verb/Motion Gap Filled |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Something-Something v2** (Goyal et al.) | Something-Something v1 | 220,847 clips (approx. 215 hrs) | 174 unique classes (Motion-based / Fine-grained verbs) | Unseen objects, background variations, and daily physical interactions. | **High:** Isolates motion by pairing similar verbs with vastly different everyday objects, preventing models from relying on static scenes. | **Covers core gap:** Provides an excellent template for fine-grained verb control, but lacks explicit cross-view or camera-motion shifts. |
 
+## Multi-Modal Domain Adaptation for Fine-Grained Action Recognition
+EPIC-Kitchens D1/D2/D3: Three kitchens from EPIC-Kitchens-55 treated as separate domains over 8 verb classes, yielding 6 source→target pairs.
+Multi-Modal Domain Adaptation for Fine-Grained Action Recognition (MM-SADA), CVPR 2020 https://arxiv.org/abs/2001.09691
 
+### Basics:
 
-
-
-# Literature Review: Video Action Generalization
-
-## Quick Table of Contents
-* [1. Something-Something v2](#1-something-something-v2)
-* [2. EPIC-KITCHENS-100](#2-epic-kitchens-100)
-
----
-
-## 1. Something-Something v2
-
-### Metadata
-* **Base Dataset:** Something-Something v1
-* **Dataset Scale:** ~220,847 video clips (approx. 215 hours)
-* **Classes:** 174 unique classes (Motion-based / Fine-grained verbs)
-* **Example Classes:** *Pushing something from left to right*, *Tipping something over*, *Pretending to open something*
-
-### Detailed Analysis
+* **Base Dataset(s):** EPIC-Kitchens (specifically environments D1, D2, and D3 corresponding to participants P08, P01, and P22).
+* **Dataset Scale:** 10,094 video clips. Total hours: Not reported.
+* **Classes:** 8 unique classes (Human-Object Interaction).
+* **Example Classes:** put, take, open, close, wash.
 
 #### Domain Shift Tested
-The paper evaluates domain generalization across unseen physical objects and diverse background environments. Models are trained on specific object-verb pairings and tested on completely novel object instances performing the same action. The exact domain shift forces the network to decouple the motion representation from object visual features.
+
+The paper evaluates cross-environment domain adaptation in egocentric video across three distinct real-world kitchen environments. Models are trained on labeled action segments from a source kitchen and tested on an unlabeled target kitchen. Generalization is evaluated against environmental changes including background geometry, spatial layouts, lighting conditions, camera angles, and visual clutter while maintaining egocentric viewpoints.
 
 #### Non-Object Shift Suitability
-**High Suitability.** Because actors perform identical actions with vastly different everyday objects, this dataset is an exceptional benchmark for testing scene and object invariance. However, it relies heavily on crowd-sourced mobile footage, meaning it lacks controlled camera-pose or lighting shifts.
+
+This dataset provides a useful framework for evaluating non-object environmental shifts. Keeping the verb label set consistent across different physical kitchens isolates shifts caused by room architecture, background lighting, visual distraction, and participant-specific egocentric motion. Incorporating this setup allows testing model resilience to spatial background shifts without changing the underlying action definitions.
 
 #### Verb / Motion Gap Filled
-**Partial Alignment.** While SSv2 is a gold standard for verb-centric learning, it primarily features short, hand-centric manipulations. It leaves a critical gap in full-body human actions, controlled lighting transitions, and precise multi-view video setups that our new 1000+ clip dataset can explicitly address.
 
----
+Although the paper isolates verb classes across kitchens, the actions remain heavily tied to egocentric kitchen settings where co-occurring objects (e.g., taps, fridges, drawers) strongly correlate with specific actions. Our new 1000+ clip dataset addresses this limitation by evaluating temporal motion patterns across diverse non-kitchen environments and broader contexts, prioritizing pure verb dynamics over object appearances to mitigate object bias.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
