@@ -242,5 +242,5 @@ No Strategy
   
 </details>
 
-note: Video recording strategy similar to our multi-camera setup
-note: Many generalization flavors can be tested using this dataset but there still seems to be room for our idea to help with object bias.
+- note: Video recording strategy similar to our multi-camera setup
+- note: Many generalization flavors can be tested using this dataset but there still seems to be room for our idea to help with object bias.
