@@ -277,3 +277,43 @@ It provides a valuable benchmark for egocentric non-object shifts, specifically 
 Although the dataset tracks 97 verbs, action labels remain heavily coupled with specific kitchen objects (300 noun classes). Consequently, models often exploit static object shortcuts rather than temporal motion dynamics. Our new 1000+ clip dataset fills this gap by decoupling actions from specific objects, isolating pure motion patterns, and forcing models to prioritize temporal kinematic movement over static spatial context.
 
 </details>
+
+
+
+
+
+## ${\color{yellow} * }$ Sims4Action - Let's Play for Action: Recognizing Activities of Daily Living by Learning from Life Simulation Video Games
+
+<details>
+
+- Sims4Action: Ten hours of activities of daily living recorded inside “Sims 4”. Its Gaming→Real benchmark evaluates on real Toyota Smarthome video over 10 corresponding classes.
+- IROS 2021 https://ieeexplore.ieee.org/document/9636381
+
+### Basics:
+
+* **Base Dataset(s):** SIMS4ACTION (generated via The Sims 4) and Toyota Smarthome.
+* **Dataset Scale:** 10 hours of video content.
+* **Classes:** 10 unique classes (Human-Object Interaction).
+* **Example Classes:** Cooking, drinking, reading, using tablet, walking.
+
+#### Domain Shift Tested
+
+The paper targets synthetic-to-real domain generalization by controlling avatar appearance, room layout, and camera viewpoint shifts within the simulation game environment. The core domain shift measures how models trained on synthetic rendering engines translate to real-world smart-home monitoring camera streams.
+
+#### Evaluation Protocol
+
+The benchmark uses two setups: Gaming-to-Gaming for synthetic validation and Gaming-to-Real for cross-domain generalization. Evaluated models (I3D and S3D) are trained purely on SIMS4ACTION data and tested zero-shot on real-world Toyota Smarthome clips using top-1 classification accuracy.
+
+#### Non-Object Shift Suitability
+
+SIMS4ACTION effectively evaluates synthetic visual domain gaps, synthetic render artifacts, subject physical appearance variations, and fixed-versus-moving camera angles. This setup offers a strong template for testing environment and camera viewpoint shifts across virtual and physical domains.
+
+#### Verb / Motion Gap Filled
+
+SIMS4ACTION heavily relies on static object cues (e.g., tablet, cup, stove) inherent to daily activities, which induces high object bias. Our 1000+ clip dataset addresses this by decoupling verbs from specific objects and prioritizing dynamic temporal motion dynamics over static scene context.
+
+#### Technique to Create Synthetic Dataset
+
+The authors execute desired actions in a top-down manner using commercial life-simulation software (The Sims 4). By manually triggering action routines across custom-built virtual home environments, they capture varied avatar demographics, ambient surroundings, and camera trajectories cheaply without human privacy constraints.
+
+</details>
