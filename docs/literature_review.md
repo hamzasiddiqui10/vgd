@@ -60,6 +60,10 @@ The concept that different modalities carry different levels of domain invarianc
 
 
 
+
+
+
+
 ## ${\color{green} * }$ ARGO1M: What can a cook in Italy teach a mechanic in India? Action Recognition Generalisation Over Scenarios and Locations
 
 <details>
@@ -83,6 +87,17 @@ Generalization is defined as the capability of an action recognition model to cl
 
 They introduce Causal Intervention for Action Recognition (CIR), a training method designed to remove contextual and object bias from egocentric action representations which apparently helps quite significantly. (Explore more)
 
+#### Evaluation Protocol
+
+The ARGO1M evaluation protocol tests action recognition generalization across two distinct distribution shifts: **scenario shifts** and **location shifts**.
+
+The benchmark partitions Ego4D egocentric videos into disjoint training and testing sets based on recorded scenario contexts and geographic regions. 
+* Under the **Out-of-Scenario (OOS)** protocol, models are trained on specific activity domains (such as cooking) and evaluated on unobserved activity domains (such as auto repair).
+* Under the **Out-of-Location (OOL)** protocol, models are evaluated on actions recorded in geographical regions unseen during training.
+
+The protocol uses top-1 accuracy on verb classification to assess whether a model learns domain-agnostic motion representations or merely memorizes static scene background and context cues.
+
+
 #### Non-Object Shift Suitability (environment shifts)
 
 The dataset provides an effective testbed for non-object domain shifts by evaluating background environments, recording setups, and geographical contexts. Incorporating this benchmark into our test suite allows us to evaluate how robustly models adapt to drastic changes in scene appearance, lighting, and ambient surroundings across different global environments while keeping action definitions constant.
@@ -94,15 +109,6 @@ While ARGO1M categorizes videos using verb labels, its real-world egocentric cli
 #### Technique to Create Synthetic Dataset
 
 No Strategy
-
-#### Their Protocol 
-The ARGO1M evaluation protocol tests action recognition generalization across two distinct distribution shifts: **scenario shifts** and **location shifts**.
-
-The benchmark partitions Ego4D egocentric videos into disjoint training and testing sets based on recorded scenario contexts and geographic regions. 
-* Under the **Out-of-Scenario (OOS)** protocol, models are trained on specific activity domains (such as cooking) and evaluated on unobserved activity domains (such as auto repair).
-* Under the **Out-of-Location (OOL)** protocol, models are evaluated on actions recorded in geographical regions unseen during training.
-
-The protocol uses top-1 accuracy on verb classification to assess whether a model learns domain-agnostic motion representations or merely memorizes static scene background and context cues.
 
 </details>
 
