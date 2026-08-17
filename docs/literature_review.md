@@ -340,7 +340,7 @@ The authors execute desired actions in a top-down manner using commercial life-s
 
 
 
-## $ {\color{yellow} * }$  ActorShift: Audio-Adaptive Activity Recognition Across Video Domains
+## ${\color{yellow} * }$  ActorShift: Audio-Adaptive Activity Recognition Across Video Domains
 
 <details>
 
