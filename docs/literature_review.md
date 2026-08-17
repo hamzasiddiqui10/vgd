@@ -532,7 +532,7 @@ Note: Abstract of this paper looks EXACTLY like what we want to achieve in our r
 <details>
 
 - Charades-Ego: Paired first- and third-person recordings of the same scripted daily activities, covering 157 classes over roughly 7.8K videos.
-- CVPR 2018: https://arxiv.org/abs/1804.09627
+- Actor and Observer: Joint Modeling of First and Third-Person Videos, CVPR 2018: https://arxiv.org/abs/1804.09627
 
 ### Basics:
 
@@ -564,3 +564,47 @@ No Strategy
 </details>
 
 
+
+
+
+
+
+
+
+## ${\color{yellow} * }$ Charades-Ego - A Large-Scale Dataset of Paired Third and First Person Videos
+
+(Dataset-Report)
+
+<details>
+
+Dataset report: Charades-Ego: A Large-Scale Dataset of Paired Third and First Person Videos, arXiv 2018 https://arxiv.org/abs/1804.09626
+
+### Basics:
+
+* **Base Dataset(s):** Charades-Ego (built upon the original Charades framework).
+* **Dataset Scale:** 7,860 paired video clips totaling 68.8 hours of video (34.4 hours third-person and 34.4 hours first-person).
+* **Classes:** 157 unique classes (Human-Object Interaction (HOI) and daily indoor activities).
+* **Example Classes:** Pouring into a cup, Closing a door, Holding a phone, Sitting in a chair, Washing a dish.
+
+#### Domain Shift Tested
+
+Generalization is defined as cross-view translation between an observer viewpoint and an actor viewpoint. The exact domain shift being tested is the shift from exocentric (third-person) to egocentric (first-person) video perspectives for daily household activities.
+
+#### Evaluation Protocol
+
+The evaluation protocol measures zero-shot and cross-view activity classification and localization performance. Models are evaluated using mean Average Precision (mAP) on egocentric clips after training on exocentric clips or joint representations.
+
+#### Domain Shifts (Excluding Object Bias)
+
+The dataset evaluates a cross-view domain shift, specifically comparing exocentric (third-person) versus egocentric (first-person) viewpoints. It tests how models handle severe visual perspective changes, self-occlusions, and camera motion without changing the underlying human-object activity.
+
+#### Verb / Motion Gap Filled
+
+While Charades-Ego pairs viewpoints, its actions are tightly bound to static indoor objects (e.g., cups, doors). Models often recognize the object rather than the temporal motion. Our 1000+ clip dataset addresses this by isolating pure verbs and object-agnostic motion dynamics to directly evaluate temporal feature learning without static object cues.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+
+
+</details>
