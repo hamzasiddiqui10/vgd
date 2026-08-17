@@ -469,3 +469,54 @@ No Strategy
 
 
 </details>
+
+
+
+
+
+
+
+
+
+
+
+
+## ${\color{yellow} * }$ Human-centric Analysis Toolkit (HAT) - Enabling Detailed Action Recognition Evaluation Through Video Dataset Augmentation
+
+<details>
+
+- Human-centric Analysis Toolkit (HAT): Generates manipulated videos from existing datasets (actor masked out, background inpainted, and similar variants) using segmentation and video inpainting, so background bias can be quantified without new manual annotation.
+
+- NeurIPS 2022 Datasets & Benchmarks: https://openreview.net/forum?id=eOnQ2etkxto
+
+### Basics
+
+* **Base Dataset(s):** Kinetics-400
+* **Dataset Scale:** Not reported
+* **Classes:** 400 unique classes (Generic activity)
+* **Example Classes:** Bending back, Capoeira, Snowmobiling, Eating, Drinking coffee
+
+### Domain Shift Tested
+
+Generalization is defined by isolating human motion from scene context. The framework tests domain shifts across counterfactual synthetic variants: background removal via video inpainting (Background-Only), human figure extraction against gray background (Human-Only), and splicing human actions onto incongruous or cross-class background environments (Action-Swap).
+
+### Evaluation Protocol
+
+The primary setup relies on out-of-distribution counterfactual evaluation on synthetically manipulated video sets without fine-tuning. Models are evaluated using top-1 accuracy, relative accuracy retention, and top-1 background-class prediction rates to quantify model sensitivity to scene context versus human motion cues.
+
+### Domain Shifts (Excluding Object Bias)
+
+The dataset evaluates synthetic background swapping and scene removal, isolating pure human motion from environmental cues like landscapes or indoor scenes. This background-isolation framework provides a usable paradigm for testing cross-environment domain shifts.
+
+### Verb / Motion Gap Filled
+
+The paper relies on automated segmentation that treats interacted objects as background, creating potential visual artifacts or removing essential functional cues. Our 1000+ clip dataset can explicitly capture clean, unmanipulated real-world videos of purely temporal, motion-centric verbs to evaluate dynamic actions without reliance on inpainting artifacts.
+
+### Technique to Create Synthetic Dataset
+
+The toolkit segments the temporal human figure using SeMask, applies video inpainting (E2FGVI) to remove human pixels and fill the background, and overlays extracted human masks onto alternative background videos to construct Action-Swap, Human-Only, and Background-Only counterfactual datasets.
+
+
+</details>
+
+Note: Abstract of this paper looks EXACTLY like what we want to achieve in our research.
