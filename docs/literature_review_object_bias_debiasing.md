@@ -34,8 +34,14 @@ StillMix uses a **2D reference network** to identify frames likely to contain bi
 
 ### Basics:
 
-* **Venue & Year:** arXiv 2019  (Choi et al., 2019)* **Paper Link:** https://arxiv.org/abs/1912.04378
-* **Base Dataset(s):** Kinetics for pre-training, with transfer to downstream action classification, temporal localization, and spatio-temporal action detection tasks  (Choi et al., 2019)* **Dataset Scale:** Not reported in the supplied evidence  (Choi et al., 2019)* **Classes:** Not reported in the supplied evidence; the focus is generic activity recognition with scene context bias  (Choi et al., 2019)* **Example Classes:** playing basketball on a basketball court is the motivating example; additional class names are not reported in the supplied evidence  (Choi et al., 2019)* **Debiasing Strategy:** Scene-adversarial training plus human-mask confusion loss  (Choi et al., 2019)#### Abstract Summary
+* **Venue & Year:** arXiv 2019  (Choi et al., 2019)
+* **Paper Link:** [https://arxiv.org/abs/1912.04378](https://arxiv.org/abs/1912.05534)
+* **Base Dataset(s):** Kinetics for pre-training, with transfer to downstream action classification, temporal localization, and spatio-temporal action detection tasks  (Choi et al., 2019)
+* **Dataset Scale:** Not reported in the supplied evidence  (Choi et al., 2019)* **Classes:** Not reported in the supplied evidence; the focus is generic activity recognition with scene context bias  (Choi et al., 2019)
+* **Example Classes:** playing basketball on a basketball court is the motivating example; additional class names are not reported in the supplied evidence  (Choi et al., 2019)
+* **Debiasing Strategy:** Scene-adversarial training plus human-mask confusion loss  (Choi et al., 2019)
+
+#### Abstract Summary
 
 This paper focuses specifically on **scene bias**, the tendency of action models to exploit recurring scene context instead of action evidence  (Choi et al., 2019). It argues that datasets such as Kinetics contain substantial scene representation bias, so features learned during pre-training may transfer poorly to new classes and tasks if they encode scene shortcuts too strongly  (Choi et al., 2019). The central claim is that suppressing scene predictability during representation learning yields more generalizable action features across downstream problems  (Choi et al., 2019).
 
@@ -49,9 +55,15 @@ The training objective augments standard action cross-entropy with two extra los
 
 ### Basics:
 
-* **Venue & Year:** arXiv 2025  (Fioresi et al., 2025)* **Paper Link:** https://arxiv.org/abs/2501.18008
-* **Base Dataset(s):** Kinetics-400, UCF101, HMDB51, evaluated with SCUBA and SCUFO bias protocols  (Fioresi et al., 2025)* **Dataset Scale:** Not reported in the supplied evidence  (Fioresi et al., 2025)* **Classes:** Not reported in the supplied evidence; the tasks are generic action recognition with separate background- and foreground-bias evaluation  (Fioresi et al., 2025)* **Example Classes:** Not reported in the supplied evidence
-* **Debiasing Strategy:** End-to-end adversarial debiasing on static clips with entropy maximization and gradient penalty  (Fioresi et al., 2025)#### Abstract Summary
+* **Venue & Year:** arXiv 2025  (Fioresi et al., 2025)
+* **Paper Link:** 
+* **Base Dataset(s):** Kinetics-400, UCF101, HMDB51, evaluated with SCUBA and SCUFO bias protocols  (Fioresi et al., 2025)
+* **Dataset Scale:** Not reported in the supplied evidence  (Fioresi et al., 2025)
+* **Classes:** Not reported in the supplied evidence; the tasks are generic action recognition with separate background- and foreground-bias evaluation  (Fioresi et al., 2025)
+* **Example Classes:** Not reported in the supplied evidence
+* **Debiasing Strategy:** End-to-end adversarial debiasing on static clips with entropy maximization and gradient penalty  (Fioresi et al., 2025)
+
+#### Abstract Summary
 
 ALBAR addresses both **background bias** and **foreground bias**, arguing that the literature has emphasized background shortcuts while leaving appearance-related foreground bias less comprehensively studied  (Fioresi et al., 2025). The method is positioned against approaches that need scene or object labels, separate critic models, or off-the-shelf saliency detectors, all of which depend on auxiliary supervision quality  (Fioresi et al., 2025). Its main claim is that static-bias mitigation can be achieved with a single 3D encoder and no attribute annotations, while also improving the evaluation protocol itself  (Fioresi et al., 2025).
 
@@ -65,9 +77,15 @@ ALBAR samples a frame from each video and repeats it to create a **static clip**
 
 ### Basics:
 
-* **Venue & Year:** ACM Multimedia 2021  (Sun et al., 2021)* **Paper Link:** https://dl.acm.org/doi/10.1145/3474085.3475466
-* **Base Dataset(s):** Something-Else  (Sun et al., 2021)* **Dataset Scale:** Not reported in the supplied evidence  (Sun et al., 2021)* **Classes:** Not reported in the supplied evidence; the task is **compositional action recognition** with verb-noun combinations  (Sun et al., 2021)* **Example Classes:** Not reported in the supplied evidence
-* **Debiasing Strategy:** Causal inference with factual and counterfactual branches, called **Counterfactual Debiasing Network**  (Sun et al., 2021)#### Abstract Summary
+* **Venue & Year:** ACM Multimedia 2021  (Sun et al., 2021)
+* **Paper Link:** 
+* **Base Dataset(s):** Something-Else  (Sun et al., 2021)
+* **Dataset Scale:** Not reported in the supplied evidence  (Sun et al., 2021)
+* **Classes:** Not reported in the supplied evidence; the task is **compositional action recognition** with verb-noun combinations  (Sun et al., 2021)
+* **Example Classes:** Not reported in the supplied evidence
+* **Debiasing Strategy:** Causal inference with factual and counterfactual branches, called **Counterfactual Debiasing Network**  (Sun et al., 2021)
+
+#### Abstract Summary
 
 This paper targets **appearance bias** in compositional action recognition, where models must generalize to unseen verb-noun combinations rather than memorizing frequent object-appearance patterns  (Sun et al., 2021). It argues that simply dropping appearance information or naively fusing object appearance with tracklets fails to generalize well to unseen actions  (Sun et al., 2021). The proposed Counterfactual Debiasing Network explicitly models appearance information and then removes its effect through a causal subtraction mechanism, aiming to improve recognition of unseen action instances  (Sun et al., 2021).
 
@@ -81,9 +99,15 @@ The framework defines a **factual inference** path that uses both appearance inf
 
 ### Basics:
 
-* **Venue & Year:** 2018, venue not reported in the supplied evidence  (Li & Vasconcelos, 2018)* **Paper Link:** https://arxiv.org/abs/1809.03327
-* **Base Dataset(s):** Existing action datasets sampled through Explicit RESOUND, plus the newly guided dataset Diving48  (Li & Vasconcelos, 2018)* **Dataset Scale:** Diving48 contains over 18,000 video clips  (Li & Vasconcelos, 2018)* **Classes:** 48 unique classes, fine-grained diving actions, which are motion-based rather than generic scene categories  (Li & Vasconcelos, 2018)* **Example Classes:** Not reported in the supplied evidence
-* **Debiasing Strategy:** Dataset calibration and representation-bias minimization through Explicit and Implicit **RESOUND**  (Li & Vasconcelos, 2018)#### Abstract Summary
+* **Venue & Year:** 2018, venue not reported in the supplied evidence  (Li & Vasconcelos, 2018)
+* **Paper Link:** 
+* **Base Dataset(s):** Existing action datasets sampled through Explicit RESOUND, plus the newly guided dataset Diving48  (Li & Vasconcelos, 2018)
+* **Dataset Scale:** Diving48 contains over 18,000 video clips  (Li & Vasconcelos, 2018)
+* **Classes:** 48 unique classes, fine-grained diving actions, which are motion-based rather than generic scene categories  (Li & Vasconcelos, 2018)
+* **Example Classes:** Not reported in the supplied evidence
+* **Debiasing Strategy:** Dataset calibration and representation-bias minimization through Explicit and Implicit **RESOUND**  (Li & Vasconcelos, 2018)
+
+#### Abstract Summary
 
 RESOUND is primarily a **dataset and evaluation** paper that formalizes representation bias in action recognition and argues that current benchmarks allow non-ground-truth representations to achieve strong performance  (Li & Vasconcelos, 2018). In the action domain, it concludes that major datasets are biased toward static representations such as objects, scenes, and people, which undermines the goal of learning motion-grounded action models  (Li & Vasconcelos, 2018). The paper frames **dataset calibration** as necessary if benchmark evaluation is to converge toward the intended action representation rather than shortcut cues  (Li & Vasconcelos, 2018).
 
@@ -97,9 +121,15 @@ RESOUND proposes a procedure to both **quantify** and **minimize** representatio
 
 ### Basics:
 
-* **Venue & Year:** Computer Vision and Image Understanding 2024  (Rastegar et al., 2024)* **Paper Link:** https://www.sciencedirect.com/science/article/pii/S1077314224000075
-* **Base Dataset(s):** Two video domain generalization benchmarks, including Kinetics2Mimetics  (Rastegar et al., 2024)* **Dataset Scale:** Not reported in the supplied evidence  (Rastegar et al., 2024)* **Classes:** Not reported in the supplied evidence; the focus is generic action recognition under domain shift  (Rastegar et al., 2024)* **Example Classes:** Not reported in the supplied evidence
-* **Debiasing Strategy:** Causal intervention on action and background with source-time and test-time interventions  (Rastegar et al., 2024)#### Abstract Summary
+* **Venue & Year:** Computer Vision and Image Understanding 2024  (Rastegar et al., 2024)
+* **Paper Link:** 
+* **Base Dataset(s):** Two video domain generalization benchmarks, including Kinetics2Mimetics  (Rastegar et al., 2024)
+* **Dataset Scale:** Not reported in the supplied evidence  (Rastegar et al., 2024)
+* **Classes:** Not reported in the supplied evidence; the focus is generic action recognition under domain shift  (Rastegar et al., 2024)
+* **Example Classes:** Not reported in the supplied evidence
+* **Debiasing Strategy:** Causal intervention on action and background with source-time and test-time interventions  (Rastegar et al., 2024)
+
+#### Abstract Summary
 
 This paper addresses **background confounding** under appearance distribution shift between source and target domains, making it a direct fit for static scene-bias mitigation in video action recognition  (Rastegar et al., 2024). Its core claim is that background acts as a confounder for the class label, so the action predictor should intervene on the action representation to separate it from domain-specific appearance  (Rastegar et al., 2024). The problem formulation is explicitly about **video domain generalization**, where shortcut reliance becomes most visible when the target domain differs in appearance from the training domain  (Rastegar et al., 2024).
 
@@ -113,16 +143,29 @@ The method learns a **causally debiased model** on the source domain using three
 
 ### Basics:
 
-* **Venue & Year:** 2022, venue not reported in the supplied evidence  (Duan et al., 2022)* **Paper Link:** https://arxiv.org/abs/2209.12811
-* **Base Dataset(s):** Kinetics-400 re-distributed splits, ARAS, downstream transfer datasets, and external web media for OmniDebias  (Duan et al., 2022)* **Dataset Scale:** Not reported in the supplied evidence  (Duan et al., 2022)* **Classes:** Not reported in the supplied evidence; the work targets generic action recognition with rare-scene and rare-object shifts  (Duan et al., 2022)* **Example Classes:** Not reported in the supplied evidence
-* **Debiasing Strategy:** Spatial-aware Multi-Aspect Debiasing, plus selective web-data augmentation via **OmniDebias**  (Duan et al., 2022)#### Abstract Summary
+* **Venue & Year:** 2022, venue not reported in the supplied evidence  (Duan et al., 2022)
+* **Paper Link:** 
+* **Base Dataset(s):** Kinetics-400 re-distributed splits, ARAS, downstream transfer datasets, and external web media for OmniDebias  (Duan et al., 2022)
+* **Dataset Scale:** Not reported in the supplied evidence  (Duan et al., 2022)
+* **Classes:** Not reported in the supplied evidence; the work targets generic action recognition with rare-scene and rare-object shifts  (Duan et al., 2022)
+* **Example Classes:** Not reported in the supplied evidence
+* **Debiasing Strategy:** Spatial-aware Multi-Aspect Debiasing, plus selective web-data augmentation via **OmniDebias**  (Duan et al., 2022)
+
+#### Abstract Summary
 
 This paper treats representation bias as a broader problem than scene bias alone, emphasizing that action datasets often fail on videos with **rare scenes or objects** because models learn non-action facets that are spuriously predictive in the training distribution  (Duan et al., 2022). The work tackles bias from both the **algorithmic** side and the **dataset** side, combining a generic debiasing framework with selective external-data augmentation  (Duan et al., 2022). It also builds evaluation protocols, including facet-based train-test redistribution on Kinetics-400 and the ARAS dataset focused on actions with rare scenes, to measure out-of-distribution robustness more faithfully  (Duan et al., 2022).
 
 #### Specific Debiasing Techniques
 
 The proposed **SMAD** framework combines **multi-aspect adversarial training** with **Spatial-Aware Actionness Reweighting**  (Duan et al., 2022). Multi-aspect adversarial training extends prior single-factor debiasing methods by enforcing invariance to multiple non-action facets, including background scene and interacted object, rather than assuming one known bias source  (Duan et al., 2022)<paper_cite sid="S
- 
+
+
+
+
+
+
+
+ ---
 _These search results were found and analyzed using Consensus, an AI-powered search engine for research. Try it at https://consensus.app. © 2026 Consensus NLP, Inc. Personal, non-commercial use only; redistribution requires copyright holders’ consent._
  
 ## References
