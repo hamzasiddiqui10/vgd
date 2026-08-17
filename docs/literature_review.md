@@ -528,10 +528,11 @@ Note: Abstract of this paper looks EXACTLY like what we want to achieve in our r
 
 
 ## ${\color{yellow} * }$ Charades-Ego - Actor and Observer: Joint Modeling of First and Third-Person Videos
-- Charades-Ego: Paired first- and third-person recordings of the same scripted daily activities, covering 157 classes over roughly 7.8K videos.
-- CVPR 2018: https://arxiv.org/abs/1804.09627
 
 <details>
+
+- Charades-Ego: Paired first- and third-person recordings of the same scripted daily activities, covering 157 classes over roughly 7.8K videos.
+- CVPR 2018: https://arxiv.org/abs/1804.09627
 
 ### Basics:
 
