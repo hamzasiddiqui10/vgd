@@ -1,5 +1,16 @@
 # Literature Review: Video Action Generalization
 
+
+For each paper, you will find:
+1. Basic information like datasets used, action classes etc.
+2. Domain Shift Tested: How generalization is defined (e.g., egocentric vs. exocentric, lighting variations, novel domain adaptation, specific perturbations) and the exact domain shift flavor being tested.
+3. Evaluation Protocol: The primary evaluation setup used to measure generalization performance (e.g., zero-shot transfer, cross-domain validation, out-of-distribution benchmarks, metric used).
+4. Domain Shifts (Excluding Object Bias): Whether and how this dataset evaluates a useful non-object bias domain shift (e.g., egocentric vs. exocentric, lighting, background) that we should incorporate into our suite.
+5. Verb / Motion Gap Filled: How this paper leaves a gap in verb/temporal-motion evaluation that our new 1000+ clip dataset can explicitly address to combat object bias.
+6. Technique to Create Synthetic Dataset: If this paper gives a strategy to create a synthetic dataset.
+
+---
+
 ## ${\color{green} * }$ EPIC-Kitchens D1/D2/D3: Multi-Modal Domain Adaptation for Fine-Grained Action Recognition
 <details> 
   
