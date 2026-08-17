@@ -419,3 +419,53 @@ No Strategy
 
 
 </details>
+
+
+
+
+
+
+
+## ${\color{yellow} * }$ SomethingSomething-DG - VideoDG: Generalizing Temporal Relations in Videos to Novel Domains
+
+
+
+<details>
+
+- SomethingSomething-DG: 20 Something-Something categories, each split into sub-categories with different action consequences (e.g. doing something vs. pretending to do it), so the shift is purely temporal rather than in appearance. The same paper also builds DG splits divided by source dataset and by camera view.
+
+- VideoDG: Generalizing Temporal Relations in Videos to Novel Domains, TPAMI 2021
+
+
+
+https://arxiv.org/abs/1912.03716
+
+### Basics:
+
+* **Base Dataset(s):** UCF-HMDB (UCF101 and HMDB51), Something-Something, PKU-MMD, and NTU RGB+D.
+* **Dataset Scale:** Not reported
+* **Classes:** 12 unique classes across UCF-HMDB; varied across benchmarks (Generic activity and Human-Object Interaction)
+* **Example Classes:** Run, jump, shoot ball, hug, wave hands
+
+#### Domain Shift Tested
+
+Generalization is evaluated by training on source domains and testing on completely unseen target domains without target access. The paper evaluates domain shifts categorized by different dataset sources, varying consequences or stages of actions, and distinct camera viewpoints.
+
+#### Evaluation Protocol
+
+The evaluation setup uses cross-domain validation and out-of-distribution domain generalization benchmarks. Models are trained on source domains using adversarial data augmentation and tested on unseen target domains, measuring performance via top-1 classification accuracy.
+
+#### Domain Shifts (Excluding Object Bias)
+
+The paper evaluates non-object domain shifts by testing cross-viewpoint variations via multi-camera setups in NTU RGB+D, as well as structural temporal variations and environment changes across disparate video sources like UCF101, HMDB51, and PKU-MMD.
+
+#### Verb / Motion Gap Filled
+
+While the paper addresses spatial and temporal feature misalignment, its source datasets rely heavily on static appearance and object context. Our new 1000+ clip dataset explicitly isolates pure temporal motion and verb dynamics to prevent models from relying on object or background shortcuts.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+
+
+</details>
