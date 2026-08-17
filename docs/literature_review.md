@@ -19,7 +19,7 @@ This paper has a custom cross-domain split based on 3 participants (P08, P01, an
 
 The paper evaluates cross-environment domain adaptation in egocentric video across three distinct real-world kitchen environments. Models are trained on labeled action segments from a source kitchen and tested on an unlabeled target kitchen. Generalization is evaluated against environmental changes including background geometry, spatial layouts, lighting conditions, camera angles, and visual clutter while maintaining egocentric viewpoints.
 
-#### Non-Object Shift Suitability (environment shifts)
+#### Domain Shifts (Excluding Object Bias) (environment shifts)
 
 This dataset provides a useful framework for evaluating non-object environmental shifts. Keeping the verb label set consistent across different physical kitchens isolates shifts caused by room architecture, background lighting, visual distraction, and participant-specific egocentric motion. Incorporating this setup allows testing model resilience to spatial background shifts without changing the underlying action definitions.
 
@@ -98,7 +98,7 @@ The benchmark partitions Ego4D egocentric videos into disjoint training and test
 The protocol uses top-1 accuracy on verb classification to assess whether a model learns domain-agnostic motion representations or merely memorizes static scene background and context cues.
 
 
-#### Non-Object Shift Suitability (environment shifts)
+#### Domain Shifts (Excluding Object Bias) (environment shifts)
 
 The dataset provides an effective testbed for non-object domain shifts by evaluating background environments, recording setups, and geographical contexts. Incorporating this benchmark into our test suite allows us to evaluate how robustly models adapt to drastic changes in scene appearance, lighting, and ambient surroundings across different global environments while keeping action definitions constant.
 
@@ -113,6 +113,10 @@ No Strategy
 </details>
 
 note: "Code and data" link from abstract page is not working!
+
+
+
+
 
 
 
@@ -149,7 +153,7 @@ Generalization is defined as compositional OOD transfer, evaluating whether a mo
 
 The protocol evaluates compositional generalization across 174 categories using 55k training clips and 58k testing clips. Performance is measured using Top-1 and Top-5 classification acc. under a zero-shot split. The paper also includes a few-shot compositional evaluation protocol (1-shot and 5-shot) on base and novel categories to test rapid adaptation. Performance is evaluated under two distinct conditions: using human-annotated ground-truth bounding boxes for hands and objects, and using predictions from automated object detectors and trackers.
 
-#### Non-Object Shift Suitability (does work for object bias)
+#### Domain Shifts (Excluding Object Bias) (does work for object bias)
 
 This dataset focuses entirely on compositional action-object shifts rather than explicit environmental or sensor domain shifts. Although crowdsourced clips contain natural variations in background scenes and lighting, Something-Else does not systematically isolate or control these factors. Without explicit splits for testing egocentric versus exocentric viewpoints, lighting variations, or background changes, this benchmark CANNOT directly evaluate non-object environmental domain generalization within our test suite.
 
@@ -194,7 +198,7 @@ Zero-shot compositionality tests whether a model trained on common pairs (like "
 
 The evaluation protocol measures zero-shot compositionality transfer using mean weighted average precision (mWAP) and mean subsampled average precision (mSAP) across 122 action classes. These specialized metrics compensate for visual redundancy and sample weighting when multiple clips originate from the same web video. Models are evaluated with and without structured hard negative samples, which include video clips where only the verb occurs, only the noun occurs, or both appear without the action being performed.
 
-#### Non-Object Shift Suitability (not focused on this but does this regardless)
+#### Domain Shifts (Excluding Object Bias) (not focused on this but does this regardless)
 
 RareAct does NOT explicitly annotate physical non-object domain shifts such as controlled lighting variations, systematic viewpoint transformations, egocentric versus exocentric viewpoint shifts, or environmental perturbations. However, because its video clips are harvested from unconstrained web sources, the benchmark naturally incorporates diverse background environments, unscripted camera motions, and real-world lighting conditions. Nevertheless, its primary focus remains compositional semantic shift rather than controlled physical non-object shifts.
 
@@ -206,6 +210,11 @@ Although RareAct effectively breaks standard semantic co-occurrence priors by pa
 
 No Strategy
 </details>
+
+
+
+
+
 
 
 ## ${\color{green} * }$ Ego-Exo4D: Understanding Skilled Human Activity from First- and Third-Person Perspectives
@@ -234,7 +243,7 @@ It also incorporates skill level variations, recording subjects across a spectru
 
 Generalization performance is measured using a structured suite of benchmark tasks designed for multimodal and multi-view video understanding. The primary protocols include fine-grained keystep recognition (segmenting and classifying sequential task steps), cross-view relation and translation (mapping egocentric features to exocentric viewpoints), proficiency estimation, and 3D body and hand pose recovery. Evaluation setups use cross-view validation (for instance, training on exocentric streams and testing on egocentric streams) evaluated via top-1 classification accuracy, mean average precision (mAP), edit distance, and 3D joint position error metrics.
 
-#### Non-Object Shift Suitability (multiple shifts can be tested using this)
+#### Domain Shifts (Excluding Object Bias) (multiple shifts can be tested using this)
 
 Ego-Exo4D provides a robust benchmark for evaluating non-object domain shifts within video action recognition systems. It isolates drastic perspective variations between dynamic wearable viewpoints and fixed ambient views, allowing researchers to evaluate how model representations transfer across viewpoints. Furthermore, because identical procedural and physical tasks are performed across diverse geographic locations, real-world indoor and outdoor environments, and varying ambient lighting conditions, the dataset effectively benchmarks model robustness against background clutter and scene distribution shifts.
 
@@ -274,7 +283,7 @@ No Strategy
 
 Evaluates domain shift through cross-environment generalization, participant variation, and temporal drift ("test of time" shift between 2018 and 2020 recordings). It also provides an Unsupervised Domain Adaptation benchmark testing models trained on a subset of kitchen environments against unseen target kitchens.
 
-#### Non-Object Shift Suitability
+#### Domain Shifts (Excluding Object Bias)
 
 It provides a valuable benchmark for egocentric non-object shifts, specifically changes in personal kitchen environments, background layouts, camera movement, lighting conditions, and mounting positions across 45 distinct unscripted homes. This helps measure how models handle real-world environmental and viewpoint variance from a first-person perspective.
 
@@ -310,7 +319,7 @@ The paper targets synthetic-to-real domain generalization by controlling avatar 
 
 The benchmark uses two setups: Gaming-to-Gaming for synthetic validation and Gaming-to-Real for cross-domain generalization. Evaluated models (I3D and S3D) are trained purely on SIMS4ACTION data and tested zero-shot on real-world Toyota Smarthome clips using top-1 classification accuracy.
 
-#### Non-Object Shift Suitability
+#### Domain Shifts (Excluding Object Bias)
 
 SIMS4ACTION effectively evaluates synthetic visual domain gaps, synthetic render artifacts, subject physical appearance variations, and fixed-versus-moving camera angles. This setup offers a strong template for testing environment and camera viewpoint shifts across virtual and physical domains.
 
@@ -323,3 +332,48 @@ SIMS4ACTION heavily relies on static object cues (e.g., tablet, cup, stove) inhe
 The authors execute desired actions in a top-down manner using commercial life-simulation software (The Sims 4). By manually triggering action routines across custom-built virtual home environments, they capture varied avatar demographics, ambient surroundings, and camera trajectories cheaply without human privacy constraints.
 
 </details>
+
+
+
+
+
+
+
+
+##$ {\color{yellow} * }$  ActorShift: Audio-Adaptive Activity Recognition Across Video Domains
+
+<details>
+
+- ActorShift: Human actors from Kinetics-700 as source and animal actors collected from YouTube as target, over 7 classes.
+- CVPR 2022: https://arxiv.org/abs/2203.14240
+
+### Basics:
+
+* **Base Dataset(s):** ActorShift (introduced), EPIC-Kitchens, and CharadesEgo.
+* **Dataset Scale:** ActorShift contains 1,505 video clips (1,305 source clips from Kinetics-700 and 200 target clips from YouTube). Total hours are Not reported.
+* **Classes:** 7 unique classes (Generic activity).
+* **Example Classes:** Sleeping, watching TV, eating, drinking, swimming.
+
+#### Domain Shift Tested
+
+Domain generalization and adaptation are evaluated under actor shift, environment/scenery shift, and camera viewpoint shift. Specifically, the paper introduces actor shift where the source domain contains human actors performing activities and the target domain consists of animals performing the same activities, creating significant appearance and motion variance across domains.
+
+#### Evaluation Protocol
+
+The evaluation uses unsupervised domain adaptation across audio-visual benchmarks. Models are trained on a labeled source domain and an unlabeled target domain using paired audio-visual streams. Generalization performance is primarily measured via top-1 classification accuracy on the target domain splits across EPIC-Kitchens, CharadesEgo, and ActorShift.
+
+#### Domain Shifts (Excluding Object Bias)
+
+The paper evaluates actor species shift (human to animal), egocentric versus exocentric viewpoint shifts, and environment shifts across distinct kitchens or home environments. Incorporating these audio-visual actor and viewpoint shifts provides a non-object benchmark for evaluating dynamic motion and cross-modal invariance across distinct recording settings.
+
+#### Verb / Motion Gap Filled
+
+While this paper leverages audio modalities to mitigate visual domain shifts, it relies on broad activity classes where objects and ambient audio heavily anchor predictions. It leaves a gap in purely visual temporal motion dynamics where actions occur silently or share identical objects. Our new 1000+ clip dataset explicitly isolates fine-grained motion trajectories and verb distinctions without reliance on sound cues.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+
+</details>
+
+
