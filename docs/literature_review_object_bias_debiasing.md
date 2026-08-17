@@ -38,7 +38,8 @@ StillMix uses a **2D reference network** to identify frames likely to contain bi
 
 * **Venue & Year:** arXiv 2019  (Choi et al., 2019)
 * **Base Dataset(s):** Kinetics for pre-training, with transfer to downstream action classification, temporal localization, and spatio-temporal action detection tasks  (Choi et al., 2019)
-* **Dataset Scale:** Not reported in the supplied evidence  (Choi et al., 2019)* **Classes:** Not reported in the supplied evidence; the focus is generic activity recognition with scene context bias  (Choi et al., 2019)
+* **Dataset Scale:** Not reported in the supplied evidence  (Choi et al., 2019)
+* **Classes:** the focus is generic activity recognition with scene context bias  (Choi et al., 2019)
 * **Example Classes:** playing basketball on a basketball court is the motivating example; additional class names are not reported in the supplied evidence  (Choi et al., 2019)
 * **Debiasing Strategy:** Scene-adversarial training plus human-mask confusion loss  (Choi et al., 2019)
 
@@ -62,7 +63,7 @@ The training objective augments standard action cross-entropy with two extra los
 * **Venue & Year:** arXiv 2025  (Fioresi et al., 2025)
 * **Base Dataset(s):** Kinetics-400, UCF101, HMDB51, evaluated with SCUBA and SCUFO bias protocols  (Fioresi et al., 2025)
 * **Dataset Scale:** Not reported in the supplied evidence  (Fioresi et al., 2025)
-* **Classes:** Not reported in the supplied evidence; the tasks are generic action recognition with separate background- and foreground-bias evaluation  (Fioresi et al., 2025)
+* **Classes:** the tasks are generic action recognition with separate background- and foreground-bias evaluation  (Fioresi et al., 2025)
 * **Example Classes:** Not reported in the supplied evidence
 * **Debiasing Strategy:** End-to-end adversarial debiasing on static clips with entropy maximization and gradient penalty  (Fioresi et al., 2025)
 
@@ -86,7 +87,7 @@ ALBAR samples a frame from each video and repeats it to create a **static clip**
 * **Venue & Year:** ACM Multimedia 2021  (Sun et al., 2021)
 * **Base Dataset(s):** Something-Else  (Sun et al., 2021)
 * **Dataset Scale:** Not reported in the supplied evidence  (Sun et al., 2021)
-* **Classes:** Not reported in the supplied evidence; the task is **compositional action recognition** with verb-noun combinations  (Sun et al., 2021)
+* **Classes:** the task is **compositional action recognition** with verb-noun combinations  (Sun et al., 2021)
 * **Example Classes:** Not reported in the supplied evidence
 * **Debiasing Strategy:** Causal inference with factual and counterfactual branches, called **Counterfactual Debiasing Network**  (Sun et al., 2021)
 
@@ -134,7 +135,7 @@ RESOUND proposes a procedure to both **quantify** and **minimize** representatio
 * **Venue & Year:** Computer Vision and Image Understanding 2024  (Rastegar et al., 2024)
 * **Base Dataset(s):** Two video domain generalization benchmarks, including Kinetics2Mimetics  (Rastegar et al., 2024)
 * **Dataset Scale:** Not reported in the supplied evidence  (Rastegar et al., 2024)
-* **Classes:** Not reported in the supplied evidence; the focus is generic action recognition under domain shift  (Rastegar et al., 2024)
+* **Classes:** the focus is generic action recognition under domain shift  (Rastegar et al., 2024)
 * **Example Classes:** Not reported in the supplied evidence
 * **Debiasing Strategy:** Causal intervention on action and background with source-time and test-time interventions  (Rastegar et al., 2024)
 
@@ -158,7 +159,7 @@ The method learns a **causally debiased model** on the source domain using three
 * **Venue & Year:** 2022, venue not reported in the supplied evidence  (Duan et al., 2022)
 * **Base Dataset(s):** Kinetics-400 re-distributed splits, ARAS, downstream transfer datasets, and external web media for OmniDebias  (Duan et al., 2022)
 * **Dataset Scale:** Not reported in the supplied evidence  (Duan et al., 2022)
-* **Classes:** Not reported in the supplied evidence; the work targets generic action recognition with rare-scene and rare-object shifts  (Duan et al., 2022)
+* **Classes:** the work targets generic action recognition with rare-scene and rare-object shifts  (Duan et al., 2022)
 * **Example Classes:** Not reported in the supplied evidence
 * **Debiasing Strategy:** Spatial-aware Multi-Aspect Debiasing, plus selective web-data augmentation via **OmniDebias**  (Duan et al., 2022)
 
