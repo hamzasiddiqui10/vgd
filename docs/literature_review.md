@@ -520,3 +520,46 @@ The toolkit segments the temporal human figure using SeMask, applies video inpai
 </details>
 
 Note: Abstract of this paper looks EXACTLY like what we want to achieve in our research.
+
+
+
+
+
+
+
+## ${\color{yellow} * }$ Charades-Ego - Actor and Observer: Joint Modeling of First and Third-Person Videos
+- Charades-Ego: Paired first- and third-person recordings of the same scripted daily activities, covering 157 classes over roughly 7.8K videos.
+- CVPR 2018: https://arxiv.org/abs/1804.09627
+
+<details>
+
+### Basics:
+
+* **Base Dataset(s):** Charades-Ego (introduced alongside Charades).
+* **Dataset Scale:** 7,860 paired videos (68.8 total hours; 34.4 hours first-person, 34.4 hours third-person).
+* **Classes:** 157 unique classes (Human-Object Interaction (HOI)).
+* **Example Classes:** Holding a laptop, sitting in a chair, opening a door, drinking from a cup, putting on shoes.
+
+#### Domain Shift Tested
+
+Generalization is defined as cross-view perspective transfer between third-person (observer) and first-person (actor/egocentric) views. The domain shift tests how representations learned from widely available third-person video data adapt to first-person egocentric execution of daily indoor human activities.
+
+#### Evaluation Protocol
+
+The evaluation setup measures zero-shot and weakly supervised domain adaptation from third-person to first-person views. Models are trained on third-person or weakly paired data and evaluated on egocentric action recognition using mean Average Precision (mAP) across action categories.
+
+#### Domain Shifts (Excluding Object Bias)
+
+This paper evaluates viewpoint shift (first-person egocentric versus third-person exocentric views) across identical indoor scripts, environments, and actor identities. Incorporating this cross-view viewpoint shift allows evaluation of camera pose, body visibility, and motion perspective shifts independent of ambient environment changes.
+
+#### Verb / Motion Gap Filled
+
+Charades-Ego relies heavily on static object cues within Human-Object Interactions (such as laptops or cups) to identify activity labels, making models susceptible to object bias. Our new 1000+ clip dataset addresses this by isolating fine-grained temporal motion and verb-centric actions without relying on distinct object shortcuts.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+
+</details>
+
+
