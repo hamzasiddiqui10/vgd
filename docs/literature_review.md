@@ -377,3 +377,45 @@ No Strategy
 </details>
 
 
+
+
+
+
+
+
+## ${\color{yellow} * }$ Human-Animal-Cartoon (HAC) - SimMMDG: A Simple and Effective Framework for Multi-modal Domain Generalization
+
+<details>
+
+- Human-Animal-Cartoon (HAC): Seven actions performed by humans, animals and cartoon characters.
+- NeurIPS 2023: https://arxiv.org/abs/2310.19795
+
+### Basics:
+
+* **Base Dataset(s):** EPIC-Kitchens and Human-Animal-Cartoon (HAC).
+* **Dataset Scale:** 3,381 video clips for HAC (around 1,000 clips per domain); hours for HAC are Not reported. EPIC-Kitchens contains 55 hours across 39,596 video clips.
+* **Classes:** 7 unique classes for HAC (Generic activity and Human-Animal Interaction) and 8 unique classes for EPIC-Kitchens (Human-Object Interaction).
+* **Example Classes:** sleeping, eating, running, drinking, opening door (HAC); put, take, wash, cut, pour (EPIC-Kitchens).
+
+#### Domain Shift Tested
+
+Generalization is defined as maintaining classification performance on unseen target domains without modifying target distributions during training. The primary domain shifts tested include cross-environment variations in egocentric scenes (three distinct kitchen environments D1, D2, and D3 in EPIC-Kitchens) and radical cross-species/style visual and acoustic distribution shifts across three domains (humans H, animals A, and cartoon figures C in HAC).
+
+#### Evaluation Protocol
+
+Evaluated using a multi-source leave-one-domain-out cross-domain validation protocol under a zero-shot domain generalization setup. Models train on two source domains and are evaluated directly on the unseen third target domain across combinations of video, audio, and optical flow modalities, using top-1 classification accuracy as the standard metric.
+
+#### Domain Shifts (Excluding Object Bias)
+
+The paper evaluates style, appearance, and actor distribution shifts across human, animal, and cartoon domains in HAC, as well as distinct real-world background and acoustic environments across kitchen setups in EPIC-Kitchens. These shifts capture non-object multi-modal domain variations across visual context, auditory profiles, and motion rendering styles.
+
+#### Verb / Motion Gap Filled
+
+While HAC includes general actions, its action space is constrained to seven coarse classes and depends heavily on stylistic differences across actors rather than fine-grained temporal action dynamics. Our new 1000+ clip dataset addresses this gap by isolating temporal motion structures and prioritizing fine-grained verbs over nouns to explicitly mitigate object bias.
+
+#### Technique to Create Synthetic Dataset
+
+No Strategy
+
+
+</details>
