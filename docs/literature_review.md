@@ -488,12 +488,7 @@ No Strategy
 
 
 - SomethingSomething-DG: 20 Something-Something categories, each split into sub-categories with different action consequences (e.g. doing something vs. pretending to do it), so the shift is purely temporal rather than in appearance. The same paper also builds DG splits divided by source dataset and by camera view.
-
-- VideoDG: Generalizing Temporal Relations in Videos to Novel Domains, TPAMI 2021
-
-
-
-https://arxiv.org/abs/1912.03716
+- VideoDG: Generalizing Temporal Relations in Videos to Novel Domains, TPAMI 2021: https://arxiv.org/abs/1912.03716
 
 ### Basics:
 
@@ -508,15 +503,19 @@ Generalization is evaluated by training on source domains and testing on complet
 
 #### Evaluation Protocol
 
-The evaluation setup uses cross-domain validation and out-of-distribution domain generalization benchmarks. Models are trained on source domains using adversarial data augmentation and tested on unseen target domains, measuring performance via top-1 classification accuracy.
+The evaluation setup uses cross-domain validation and OOD domain generalization benchmarks. Models are trained on source domains using adversarial data augmentation and tested on unseen target domains, measuring performance via top-1 classification accuracy.
 
 #### Domain Shifts (Excluding Object Bias)
 
-The paper evaluates non-object domain shifts by testing cross-viewpoint variations via multi-camera setups in NTU RGB+D, as well as structural temporal variations and environment changes across disparate video sources like UCF101, HMDB51, and PKU-MMD.
+- cross-viewpoint variations via multi-camera setups in NTU RGB+D, 
+- structural temporal variations and 
+- environment changes across disparate video sources like UCF101, HMDB51, and PKU-MMD.
 
 #### Verb / Motion Gap Filled
 
-While the paper addresses spatial and temporal feature misalignment, its source datasets rely heavily on static appearance and object context. Our new 1000+ clip dataset explicitly isolates pure temporal motion and verb dynamics to prevent models from relying on object or background shortcuts.
+While the paper addresses spatial and temporal feature misalignment, its source datasets rely heavily on static appearance and object context. 
+
+Our new 1000+ clip dataset can fill this gap.
 
 #### Technique to Create Synthetic Dataset
 
@@ -538,7 +537,7 @@ No Strategy
 
 ## ${\color{yellow} * }$ Human-centric Analysis Toolkit (HAT) - Enabling Detailed Action Recognition Evaluation Through Video Dataset Augmentation
 
-
+Note: Abstract of this paper looks EXACTLY like what we want to achieve in our research.
 
 - Human-centric Analysis Toolkit (HAT): Generates manipulated videos from existing datasets (actor masked out, background inpainted, and similar variants) using segmentation and video inpainting, so background bias can be quantified without new manual annotation.
 
@@ -557,24 +556,35 @@ Generalization is defined by isolating human motion from scene context. The fram
 
 ### Evaluation Protocol
 
-The primary setup relies on out-of-distribution counterfactual evaluation on synthetically manipulated video sets without fine-tuning. Models are evaluated using top-1 accuracy, relative accuracy retention, and top-1 background-class prediction rates to quantify model sensitivity to scene context versus human motion cues.
+The primary setup relies on OOD counterfactual evaluation on synthetically manipulated video sets without fine-tuning. 
+
+Models are evaluated using top-1 accuracy, relative accuracy retention, and top-1 background-class prediction rates to quantify model sensitivity to scene context versus human motion cues.
 
 ### Domain Shifts (Excluding Object Bias)
 
-The dataset evaluates synthetic background swapping and scene removal, isolating pure human motion from environmental cues like landscapes or indoor scenes. This background-isolation framework provides a usable paradigm for testing cross-environment domain shifts.
+The dataset evaluates 
+- synthetic background swapping and scene removal, 
+- isolating pure human motion from environmental cues like landscapes or indoor scenes. 
+
+This background-isolation framework provides a usable paradigm for testing **cross-environment domain shifts**.
 
 ### Verb / Motion Gap Filled
 
-The paper relies on automated segmentation that treats interacted objects as background, creating potential visual artifacts or removing essential functional cues. Our 1000+ clip dataset can explicitly capture clean, unmanipulated real-world videos of purely temporal, motion-centric verbs to evaluate dynamic actions without reliance on inpainting artifacts.
+The paper relies on automated segmentation that treats interacted objects as background, creating potential visual artifacts or removing essential functional cues. 
+
+Our 1000+ clip dataset can possibly address this.
 
 ### Technique to Create Synthetic Dataset
 
-The toolkit segments the temporal human figure using SeMask, applies video inpainting (E2FGVI) to remove human pixels and fill the background, and overlays extracted human masks onto alternative background videos to construct Action-Swap, Human-Only, and Background-Only counterfactual datasets.
+The toolkit segments the temporal human figure using SeMask, applies video inpainting (E2FGVI) to remove human pixels and fill the background, and overlays extracted human masks onto alternative background videos to construct 
+- Action-Swap counterfactual dataset, 
+- Human-Only counterfactual dataset, and 
+- Background-Only counterfactual dataset.
 
 
 
 
-Note: Abstract of this paper looks EXACTLY like what we want to achieve in our research.
+
 
 
 
@@ -583,8 +593,6 @@ Note: Abstract of this paper looks EXACTLY like what we want to achieve in our r
 
 
 ## ${\color{yellow} * }$ Charades-Ego - Actor and Observer: Joint Modeling of First and Third-Person Videos
-
-
 
 - Charades-Ego: Paired first- and third-person recordings of the same scripted daily activities, covering 157 classes over roughly 7.8K videos.
 - Actor and Observer: Joint Modeling of First and Third-Person Videos, CVPR 2018: https://arxiv.org/abs/1804.09627
@@ -598,7 +606,9 @@ Note: Abstract of this paper looks EXACTLY like what we want to achieve in our r
 
 #### Domain Shift Tested
 
-Generalization is defined as cross-view perspective transfer between third-person (observer) and first-person (actor/egocentric) views. The domain shift tests how representations learned from widely available third-person video data adapt to first-person egocentric execution of daily indoor human activities.
+Generalization is defined as across Exo-to-Ego views.
+
+The domain shift tests how representations learned from widely available third-person video data adapt to first-person egocentric execution of daily indoor human activities.
 
 #### Evaluation Protocol
 
@@ -606,11 +616,13 @@ The evaluation setup measures zero-shot and weakly supervised domain adaptation 
 
 #### Domain Shifts (Excluding Object Bias)
 
-This paper evaluates viewpoint shift (first-person egocentric versus third-person exocentric views) across identical indoor scripts, environments, and actor identities. Incorporating this cross-view viewpoint shift allows evaluation of camera pose, body visibility, and motion perspective shifts independent of ambient environment changes.
+This paper evaluates viewpoint shift (first-person egocentric versus third-person exocentric views) across identical indoor scripts, environments, and actor identities. Incorporating this cross-view viewpoint shift allows evaluation of camera pose, body visibility, and motion perspective shifts **independent of ambient environment changes**. That seems unique to this dataset.
 
 #### Verb / Motion Gap Filled
 
-Charades-Ego relies heavily on static object cues within Human-Object Interactions (such as laptops or cups) to identify activity labels, making models susceptible to object bias. Our new 1000+ clip dataset addresses this by isolating fine-grained temporal motion and verb-centric actions without relying on distinct object shortcuts.
+Charades-Ego relies heavily on static object cues within Human-Object Interactions (such as laptops or cups) to identify activity labels, making models susceptible to object bias. 
+
+Our new 1000+ clip dataset addresses can address this gap.
 
 #### Technique to Create Synthetic Dataset
 
@@ -630,8 +642,6 @@ No Strategy
 
 (Dataset-Report)
 
-
-
 Dataset report: Charades-Ego: A Large-Scale Dataset of Paired Third and First Person Videos, arXiv 2018 https://arxiv.org/abs/1804.09626
 
 ### Basics:
@@ -643,7 +653,9 @@ Dataset report: Charades-Ego: A Large-Scale Dataset of Paired Third and First Pe
 
 #### Domain Shift Tested
 
-Generalization is defined as cross-view translation between an observer viewpoint and an actor viewpoint. The exact domain shift being tested is the shift from exocentric (third-person) to egocentric (first-person) video perspectives for daily household activities.
+Generalization is defined as cross-view translation between an observer viewpoint and an actor viewpoint. 
+
+The exact domain shift being tested is the **shift from exocentric (third-person) to egocentric (first-person) video perspectives** for daily household activities.
 
 #### Evaluation Protocol
 
@@ -651,11 +663,13 @@ The evaluation protocol measures zero-shot and cross-view activity classificatio
 
 #### Domain Shifts (Excluding Object Bias)
 
-The dataset evaluates a cross-view domain shift, specifically comparing exocentric (third-person) versus egocentric (first-person) viewpoints. It tests how models handle severe visual perspective changes, self-occlusions, and camera motion without changing the underlying human-object activity.
+cross-view Exo-to-Ego domain shift.
 
 #### Verb / Motion Gap Filled
 
-While Charades-Ego pairs viewpoints, its actions are tightly bound to static indoor objects (e.g., cups, doors). Models often recognize the object rather than the temporal motion. Our 1000+ clip dataset addresses this by isolating pure verbs and object-agnostic motion dynamics to directly evaluate temporal feature learning without static object cues.
+While Charades-Ego pairs viewpoints, its actions are tightly bound to static indoor objects (e.g., cups, doors). 
+
+Our 1000+ clip dataset can address this.
 
 #### Technique to Create Synthetic Dataset
 
