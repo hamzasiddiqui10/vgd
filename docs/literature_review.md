@@ -6,7 +6,7 @@ For each paper, you will find:
 2. Domain Shift Tested: How generalization is defined in the paper (e.g., egocentric vs. exocentric, lighting variations, specific perturbations) and the exact domain shift flavors being tested.
 3. Evaluation Protocol: The primary evaluation setup used to measure generalization performance (e.g., zero-shot transfer, cross-domain validation, OOD benchmarks, metrica used).
 4. Domain Shifts (Excluding Object Bias): Whether and how this dataset evaluates a useful non-object bias that we should incorporate into our suite.
-5. Verb / Motion Gap Filled (or not): How this paper leaves a gap in verb/temporal-motion evaluation that our new 1000+ clip dataset can explicitly address to combat object bias. Basically, how will we motivate the need for our new dataset.
+5. Verb / Motion Gap Filled (or not): How this paper either adresses object bias OR leaves a gap in verb/temporal-motion evaluation that our new 1000+ clip dataset can explicitly address to combat object bias.
 6. Technique to Create Synthetic Dataset: If this paper gives a strategy to create a synthetic dataset it is mentioned.
 
 ---
@@ -201,26 +201,29 @@ No Strategy
 * **Base Dataset(s):** HowTo100M (used as the large-scale instructional text corpus to identify rarely co-occurring verb-noun pairs).
 * **Dataset Scale:** 905 total videos, 7,607 annotated video clips (10-second clip length, containing 1,765 positive clips).
 * **Classes:** 122 unique classes (Human-Object Interaction (HOI))
-* **Example Classes:** blend phone, cut keyboard, microwave shoes, drill laptop, wash rock. (verb-noun combinations that almost never occured in labels of HowTo100m dataset)
+* **Example Classes:** blend phone, cut keyboard, microwave shoes, drill laptop, wash rock. (verb-noun combinations that almost never occur in labels of HowTo100m dataset)
 
 #### Domain Shift Tested
 
-Generalization is defined as zero-shot and few-shot compositional generalization to rare, out-of-distribution verb-noun combinations. The domain shift explicitly evaluates model recognition capabilities when individual action verbs (e.g., blend, cut, microwave) and object nouns (e.g., phone, keyboard, shoes) appear frequently in training data on their own, but are combined into highly unusual, unobserved pairings that rarely or never cooccur in standard video-text pretraining corpus.
+Generalization is defined as zero-shot and few-shot compositional generalization to rare, out-of-distribution verb-noun combinations. The domain shift explicitly evaluates model's recognition capabilities when individual action verbs (e.g., blend, cut) and object nouns (e.g., phone, keyboard) appear frequently in training data on their own, but are combined into highly unusual, unobserved pairings that rarely or never cooccur in standard video-text pretraining corpus.
 
 Zero-shot compositionality tests whether a model trained on common pairs (like "cut paper", "cut apple", "type on keyboard") can correctly identify an unlikely pair ("cut keyboard") without ever having seen a single video of that specific combination during training. If a model has true compositionality, it can recognize the motion verb anywhere, regardless of how weird/unexpected the object is.
 
 
 #### Evaluation Protocol
 
-The evaluation protocol measures zero-shot compositionality transfer using mean weighted average precision (mWAP) and mean subsampled average precision (mSAP) across 122 action classes. These specialized metrics compensate for visual redundancy and sample weighting when multiple clips originate from the same web video. Models are evaluated with and without structured hard negative samples, which include video clips where only the verb occurs, only the noun occurs, or both appear without the action being performed.
+ measures zero-shot compositionality transfer using mean weighted average precision (mWAP) and mean subsampled average precision (mSAP) across 122 action classes. These specialized metrics compensate for visual redundancy and sample weighting when multiple clips originate from the same web video. Models are evaluated with and without structured hard negative samples, which include video clips where: 
+ - only the verb occurs, 
+ - only the noun occurs, or 
+ - both appear without the action being performed.
 
-#### Domain Shifts (Excluding Object Bias) (not focused on this but does this regardless)
+#### Domain Shifts (Excluding Object Bias)
 
-RareAct does NOT explicitly annotate physical non-object domain shifts such as controlled lighting variations, systematic viewpoint transformations, egocentric versus exocentric viewpoint shifts, or environmental perturbations. However, because its video clips are harvested from unconstrained web sources, the benchmark naturally incorporates diverse background environments, unscripted camera motions, and real-world lighting conditions. Nevertheless, its primary focus remains compositional semantic shift rather than controlled physical non-object shifts.
+Paper's primary focus is on compositional semantic shift rather than controlled physical non-object shifts.
 
 #### Verb / Motion Gap Filled (++)
 
-Although RareAct effectively breaks standard semantic co-occurrence priors by pairing actions with unexpected objects, its action classes remain tied to specific physical object nouns. As a result, action recognition models can still heavily rely on static visual object appearance rather than understanding temporal motion patterns. Our new 1000+ clip dataset directly fills this gap by focusing on pure verbs and motion dynamics across varying contexts, isolating temporal trajectories to mitigate spatial object bias.
+Can be helpful (Does address object bias).
 
 #### Technique to Create Synthetic Dataset
 
@@ -235,6 +238,7 @@ No Strategy
 
 ## ${\color{green} * }$ Ego-Exo4D: Understanding Skilled Human Activity from First- and Third-Person Perspectives
 
+- note: Video recording strategy similar to our multi-camera setup. We can learn setup from them.
 
 
 - Ego-Exo4D:  1,286 hours of simultaneously captured egocentric and exocentric video of skilled activities (sports, music, dance, cooking, bike repair) from 740 participants across 123 scenes in 13 cities.
@@ -244,37 +248,47 @@ No Strategy
 
 * **Base Dataset(s):** Ego-Exo4D (authors' original)
 * **Dataset Scale:** 1,286 hours of combined synchronized video across 740 participants in 123 scene contexts. (truly multimodal: Each video is accompanied by multichannel audio, eye gaze, 3D point clouds, camera poses, IMU, and multiple paired language descriptions, and an "expert commentary")
-* **Classes:** 278 unique classes (Human-Object Interaction (HOI) and physical skilled movement activities spanning 8 domain categories - cooking, music, sports, dance, ...).
+* **Classes:** 278 unique HOI classes and physical skilled movement activities spanning 8 domain categories - cooking, music, sports, dance, ...).
 * **Example Classes:** Changing a bike wheel, playing violin, bouldering climbing move, chopping garlic, dribbling a basketball.
 
 #### Domain Shift Tested
 
-The dataset primarily evaluates the domain shift between first-person egocentric camera perspectives (recorded via head-mounted Aria smart glasses) and multi-angle third-person exocentric viewpoints (recorded via stationary GoPro cameras) captured simultaneously. 
+- ego-exo: The dataset primarily evaluates the domain shift between first-person egocentric camera perspectives (recorded via head-mounted Aria smart glasses) and multi-angle third-person exocentric viewpoints (recorded via stationary GoPro cameras) captured simultaneously. 
 
-In addition to viewpoint shifts, it evaluates cross-environment and cross-subject domain adaptation across 123 natural real-world scene contexts and 13 cities worldwide. 
+- cross-environment and cross-subject domain adaptation: across 123 natural real-world scene contexts and 13 cities worldwide. 
 
-It also incorporates skill level variations, recording subjects across a spectrum of expertise ranging from absolute novices to proficient experts performing identical tasks.
+- Skill-level variations: recording subjects across a spectrum of expertise ranging from absolute novices to proficient experts performing identical tasks. (a beginner dribbling basketball vs. a pro dribbliing basketball)
 
 #### Evaluation Protocol
 
-Generalization performance is measured using a structured suite of benchmark tasks designed for multimodal and multi-view video understanding. The primary protocols include fine-grained keystep recognition (segmenting and classifying sequential task steps), cross-view relation and translation (mapping egocentric features to exocentric viewpoints), proficiency estimation, and 3D body and hand pose recovery. Evaluation setups use cross-view validation (for instance, training on exocentric streams and testing on egocentric streams) evaluated via top-1 classification accuracy, mean average precision (mAP), edit distance, and 3D joint position error metrics.
+Generalization performance is measured using a structured suite of benchmark tasks designed for multimodal and multi-view video understanding. 
 
-#### Domain Shifts (Excluding Object Bias) (multiple shifts can be tested using this)
+The primary protocols include fine-grained keystep recognition (segmenting and classifying sequential task steps), cross-view relation and translation (mapping egocentric features to exocentric viewpoints), proficiency estimation, and 3D body and hand pose recovery. 
 
-Ego-Exo4D provides a robust benchmark for evaluating non-object domain shifts within video action recognition systems. It isolates drastic perspective variations between dynamic wearable viewpoints and fixed ambient views, allowing researchers to evaluate how model representations transfer across viewpoints. Furthermore, because identical procedural and physical tasks are performed across diverse geographic locations, real-world indoor and outdoor environments, and varying ambient lighting conditions, the dataset effectively benchmarks model robustness against background clutter and scene distribution shifts.
+Evaluation setups use cross-view validation (for instance, training on exocentric streams and testing on egocentric streams) evaluated via top-1 classification accuracy, mean average precision (mAP), edit distance, and 3D joint position error metrics.
+
+#### Domain Shifts (Excluding Object Bias)
+
+Multiple. 
+
+Ego-Exo4D isolates perspective variations egocentric vs. exocentric viewpoints. 
+
+Since identical procedural and physical tasks are performed across diverse geographic locations, real-world indoor and outdoor environments, and varying ambient lighting conditions, the dataset effectively benchmarks model robustness against background clutter and scene distribution shifts.
 
 #### Verb / Motion Gap Filled (+++ Still room for our dataset to contribute)
 
-Ego-Exo4D focuses heavily on domain-specific procedural tasks and physical skills that inherently rely on distinct objects and contextual environments, such as bicycle repair tools, musical instruments, or sports equipment. Because these items strongly correlate with specific actions, models can easily achieve high performance by leveraging static object appearance or background features rather than learning genuine temporal motion dynamics. Our new 1000+ clip dataset directly fills this gap by prioritizing verb actions over nouns, isolating temporal motion patterns across varied object and background contexts to evaluate and mitigate object bias.
+Ego-Exo4D looks at domain-specific tasks and physical skills that inherently rely on distinct objects and contextual environments, such as sports equipment, musical instruments etc.. Because these items strongly correlate with specific actions, models can easily achieve high performance by learning static-object-appearance or background features rather than temporal motion. 
+
+Our new 1000+ clip dataset will directly fill this gap by prioritizing verb actions over nouns.
+
+Many generalization flavors can be tested using this dataset but there still seems to be room for our idea to help with object bias.
 
 #### Technique to Create Synthetic Dataset
 
 No Strategy
-  
 
 
-- note: Video recording strategy similar to our multi-camera setup
-- note: Many generalization flavors can be tested using this dataset but there still seems to be room for our idea to help with object bias.
+
 
 
 
@@ -283,7 +297,6 @@ No Strategy
 
 ## ${\color{yellow} * }$ EPIC-Kitchens-100 UDA challenge - Rescaling Egocentric Vision: Collection Pipeline and Challenges for EPIC-KITCHENS-100
 
- 
   
 - EPIC-Kitchens-100 UDA challenge: Models are trained on EPIC-55 footage and adapted to the unlabelled EK-100 extension, so environment and time shift together. The same paper defines the “test of time” protocol, measuring whether models degrade on footage collected two years later.
 - IJCV 2022: https://arxiv.org/abs/2006.13256
@@ -291,21 +304,26 @@ No Strategy
 ### Basics:
 
 * **Base Dataset(s):** EPIC-KITCHENS-55 (extended to EPIC-KITCHENS-100)
-* **Dataset Scale:** 100 hours, 20,000,000 frames, and 89,977 action segments across 700 videos.
+* **Dataset Scale:** 
 * **Classes:** 97 verb classes and 300 noun classes, forming fine-grained action combinations (Human-Object Interaction (HOI)).
 * **Example Classes:** Verbs: take, put, wash, cut. Nouns: plate, pan, knife, spoon.
 
-#### Domain Shift Tested (across unseen environments, unseen humans, temporal drifts)
+#### Domain Shift Tested 
 
-Evaluates domain shift through cross-environment generalization, participant variation, and temporal drift ("test of time" shift between 2018 and 2020 recordings). It also provides an Unsupervised Domain Adaptation benchmark testing models trained on a subset of kitchen environments against unseen target kitchens.
+Evaluates domain shift through:
+- cross-environment generalization, 
+- participant variation, and 
+- temporal drift ("test of time" shift between 2018 and 2020 recordings). 
 
 #### Domain Shifts (Excluding Object Bias)
 
-It provides a valuable benchmark for egocentric non-object shifts, specifically changes in personal kitchen environments, background layouts, camera movement, lighting conditions, and mounting positions across 45 distinct unscripted homes. This helps measure how models handle real-world environmental and viewpoint variance from a first-person perspective.
+It provides a valuable benchmark for egocentric non-object shifts, specifically changes in personal kitchen environments, background layouts, camera movement, lighting conditions, and mounting positions across 45 distinct unscripted homes. 
+
+This helps measure how models handle real-world environmental and viewpoint variance.
 
 #### Verb / Motion Gap Filled (+++)
 
-Although the dataset tracks 97 verbs, action labels remain heavily coupled with specific kitchen objects (300 noun classes). Consequently, models often exploit static object shortcuts rather than temporal motion dynamics. Our new 1000+ clip dataset fills this gap by decoupling actions from specific objects, isolating pure motion patterns, and forcing models to prioritize temporal kinematic movement over static spatial context.
+Models often exploit static object shortcuts rather than temporal motion dynamics. Our new 1000+ clip dataset can fill this gap.
 
 
 
@@ -316,28 +334,37 @@ Although the dataset tracks 97 verbs, action labels remain heavily coupled with 
 ## ${\color{yellow} * }$ Sims4Action - Let's Play for Action: Recognizing Activities of Daily Living by Learning from Life Simulation Video Games
 
 
-
 - Sims4Action: Ten hours of activities of daily living recorded inside “Sims 4”. Its Gaming→Real benchmark evaluates on real Toyota Smarthome video over 10 corresponding classes.
 - IROS 2021 https://ieeexplore.ieee.org/document/9636381
 
 ### Basics:
 
-* **Base Dataset(s):** SIMS4ACTION (generated via The Sims 4) and Toyota Smarthome.
+* **Base Dataset(s):** SIMS4ACTION (generated via The Sims 4 video game) and Toyota Smarthome.
 * **Dataset Scale:** 10 hours of video content.
 * **Classes:** 10 unique classes (Human-Object Interaction).
 * **Example Classes:** Cooking, drinking, reading, using tablet, walking.
 
 #### Domain Shift Tested
 
-The paper targets synthetic-to-real domain generalization by controlling avatar appearance, room layout, and camera viewpoint shifts within the simulation game environment. The core domain shift measures how models trained on synthetic rendering engines translate to real-world smart-home monitoring camera streams.
+The paper targets "synthetic-to-real" domain generalization by controlling avatar appearance, room layout, and camera viewpoint shifts within the simulation game environment. The core domain shift measures how models trained on synthetic rendering engines translate to real-world smart-home monitoring camera streams.
 
 #### Evaluation Protocol
 
-The benchmark uses two setups: Gaming-to-Gaming for synthetic validation and Gaming-to-Real for cross-domain generalization. Evaluated models (I3D and S3D) are trained purely on SIMS4ACTION data and tested zero-shot on real-world Toyota Smarthome clips using top-1 classification accuracy.
+The benchmark uses two setups: 
+- Gaming-to-Gaming for synthetic validation and 
+- Gaming-to-Real for cross-domain generalization. 
+
+Evaluated models (I3D and S3D) are trained purely on SIMS4ACTION data and tested zero-shot on real-world Toyota Smarthome clips using top-1 classification accuracy.
 
 #### Domain Shifts (Excluding Object Bias)
 
-SIMS4ACTION effectively evaluates synthetic visual domain gaps, synthetic render artifacts, subject physical appearance variations, and fixed-versus-moving camera angles. This setup offers a strong template for testing environment and camera viewpoint shifts across virtual and physical domains.
+SIMS4ACTION effectively evaluates 
+- synthetic visual domain gaps, 
+- synthetic render artifacts, 
+- subject physical appearance variations, and 
+- fixed-versus-moving camera angles. 
+
+This setup offers a strong template for testing environment and camera viewpoint shifts across virtual and physical domains for our suite.
 
 #### Verb / Motion Gap Filled
 
@@ -359,32 +386,41 @@ The authors execute desired actions in a top-down manner using commercial life-s
 ## ${\color{yellow} * }$  ActorShift: Audio-Adaptive Activity Recognition Across Video Domains
 
 
-
 - ActorShift: Human actors from Kinetics-700 as source and animal actors collected from YouTube as target, over 7 classes.
 - CVPR 2022: https://arxiv.org/abs/2203.14240
 
 ### Basics:
 
 * **Base Dataset(s):** ActorShift (introduced), EPIC-Kitchens, and CharadesEgo.
-* **Dataset Scale:** ActorShift contains 1,505 video clips (1,305 source clips from Kinetics-700 and 200 target clips from YouTube). Total hours are Not reported.
+* **Dataset Scale:** ActorShift contains 1,505 video clips (1,305 source clips from Kinetics-700 and 200 target clips from YouTube).
 * **Classes:** 7 unique classes (Generic activity).
 * **Example Classes:** Sleeping, watching TV, eating, drinking, swimming.
 
 #### Domain Shift Tested
 
-Domain generalization and adaptation are evaluated under actor shift, environment/scenery shift, and camera viewpoint shift. Specifically, the paper introduces actor shift where the source domain contains human actors performing activities and the target domain consists of animals performing the same activities, creating significant appearance and motion variance across domains.
+Domain generalization and adaptation are evaluated under 
+- actor shift (the paper introduces actor shift where the source domain contains human actors performing activities and the target domain consists of animals performing the same activities, creating significant appearance and motion variance across domains),
+- environment/scenery shift, and 
+- camera viewpoint shift. Specifically, 
 
 #### Evaluation Protocol
 
-The evaluation uses unsupervised domain adaptation across audio-visual benchmarks. Models are trained on a labeled source domain and an unlabeled target domain using paired audio-visual streams. Generalization performance is primarily measured via top-1 classification accuracy on the target domain splits across EPIC-Kitchens, CharadesEgo, and ActorShift.
+The evaluation uses unsupervised domain adaptation across audio-visual benchmarks. Models are trained on a labeled source domain and an unlabeled target domain using paired audio-visual streams. 
+
+Generalization performance is primarily measured via top-1 classification accuracy on the target domain splits across EPIC-Kitchens, CharadesEgo, and ActorShift datasets.
 
 #### Domain Shifts (Excluding Object Bias)
 
-The paper evaluates actor species shift (human to animal), egocentric versus exocentric viewpoint shifts, and environment shifts across distinct kitchens or home environments. Incorporating these audio-visual actor and viewpoint shifts provides a non-object benchmark for evaluating dynamic motion and cross-modal invariance across distinct recording settings.
+The paper evaluates 
+- actor species shift (human to animal), 
+- egocentric versus exocentric viewpoint shifts, and 
+- environment shifts across distinct kitchens or home environments. 
+
+Incorporating these audio-visual actor and viewpoint shifts can provide value for our suite.
 
 #### Verb / Motion Gap Filled
 
-While this paper leverages audio modalities to mitigate visual domain shifts, it relies on broad activity classes where objects and ambient audio heavily anchor predictions. It leaves a gap in purely visual temporal motion dynamics where actions occur silently or share identical objects. Our new 1000+ clip dataset explicitly isolates fine-grained motion trajectories and verb distinctions without reliance on sound cues.
+While this paper leverages audio modalities to mitigate visual domain shifts, it relies on broad activity classes where objects and ambient audio heavily anchor predictions. It leaves a gap in purely visual temporal motion dynamics where actions occur silently or share identical objects. Our new 1000+ clip dataset can fill this gap.
 
 #### Technique to Create Synthetic Dataset
 
@@ -415,7 +451,11 @@ No Strategy
 
 #### Domain Shift Tested
 
-Generalization is defined as maintaining classification performance on unseen target domains without modifying target distributions during training. The primary domain shifts tested include cross-environment variations in egocentric scenes (three distinct kitchen environments D1, D2, and D3 in EPIC-Kitchens) and radical cross-species/style visual and acoustic distribution shifts across three domains (humans H, animals A, and cartoon figures C in HAC).
+Generalization is defined as maintaining classification performance on unseen target domains without modifying target distributions during training. 
+
+The primary domain shifts tested include: 
+- cross-environment variations in egocentric scenes (three distinct kitchen environments D1, D2, and D3 in EPIC-Kitchens) and
+- cross-species shifts across 3 species (humans H, animals A, and cartoon figures C in HAC).
 
 #### Evaluation Protocol
 
@@ -427,7 +467,9 @@ The paper evaluates style, appearance, and actor distribution shifts across huma
 
 #### Verb / Motion Gap Filled
 
-While HAC includes general actions, its action space is constrained to seven coarse classes and depends heavily on stylistic differences across actors rather than fine-grained temporal action dynamics. Our new 1000+ clip dataset addresses this gap by isolating temporal motion structures and prioritizing fine-grained verbs over nouns to explicitly mitigate object bias.
+While HAC includes general actions, its action space is constrained to seven coarse classes and depends heavily on stylistic differences across actors rather than fine-grained temporal action dynamics. 
+
+Our new 1000+ clip dataset can address this gap.
 
 #### Technique to Create Synthetic Dataset
 
@@ -443,9 +485,6 @@ No Strategy
 
 
 ## ${\color{yellow} * }$ SomethingSomething-DG - VideoDG: Generalizing Temporal Relations in Videos to Novel Domains
-
-
-
 
 
 - SomethingSomething-DG: 20 Something-Something categories, each split into sub-categories with different action consequences (e.g. doing something vs. pretending to do it), so the shift is purely temporal rather than in appearance. The same paper also builds DG splits divided by source dataset and by camera view.
