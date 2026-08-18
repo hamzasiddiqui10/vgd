@@ -6,11 +6,19 @@ Following are 7 online academic papers from some repositories (arXiv, CVPR, ICCV
 
 
 
+---
+---
+### Some additional information
 
+SCUBA and SCUFO are test benchmarks and evaluation protocols used in video AR. They measure "static bias," or shortcut learning, where a model incorrectly relies on fixed background elements or stationary foreground objects instead of actual movement.
+- **SCUBA** evaluates bg bias by replacing or altering the bg behind a moving action clip.
+- **SCUFO** evaluates fg bias by stacking a single static frame to strip away motion cues and test reliance on non-moving elements.
+
+Both benchmarks were introduced alongside debiasing methods like StillMix to help vision models learn true dynamic motion instead of taking shortcuts.
 
 ## Mitigating and Evaluating Static Bias of Action Representations in the Background and the Foreground
 
-https://doi.org/10.48550/arxiv.2209.09393
+https://doi.org/10.48550/arxiv.2209.09393 (can't access full paper)
 
 ### Basics:
 
@@ -23,16 +31,25 @@ https://doi.org/10.48550/arxiv.2209.09393
 
 #### Abstract Summary
 
-The paper directly targets **static bias** in video action recognition, arguing that shortcut static features interfere with motion-feature learning and hurt out-of-distribution generalization  (Li et al., 2022). It distinguishes two bias sources: background context and foreground appearance such as actor clothing, and verifies foreground static bias by constructing clips whose static and moving signals conflict  (Li et al., 2022). To evaluate these effects precisely, it introduces SCUBA for background static cues and SCUFO for foreground static cues, giving the field explicit benchmarks for source-specific bias diagnosis rather than only whole-video proxy tests  (Li et al., 2022).
+In video AR, shortcut static features can interfere with the learning of motion features, resulting in poor (OOD) generalization. 
+Sources of static bias:
+1. The video background,
+2. The video foreground, such as the clothing of the actor, can also provide static bias. 
+
+In this paper, we empirically verify the existence of foreground static bias by creating test videos with conflicting signals from the static and moving portions of the video. To tackle this issue, we propose the StillMix technique, to learn robust action representations. 
+
+
 
 #### Specific Debiasing Techniques
 
-StillMix uses a **2D reference network** to identify frames likely to contain bias-inducing static evidence, then mixes those frames with other training videos so the recognizer is discouraged from relying on the injected still information  (Li et al., 2022). The method is designed to work even when the exact source of bias inside each frame cannot be segmented or enumerated in advance, which makes it broader than methods requiring explicit scene or object labels  (Li et al., 2022; Fioresi et al., 2025). The evaluation protocol constructs conflicting-signal videos by replacing backgrounds and inserting random static foregrounds, letting the model be tested on whether it follows motion or shortcut appearance cues  (Li et al., 2022). The reported outcome is that StillMix mitigates both background and foreground static bias and improves downstream video representations  (Li et al., 2022).
+Specifically, StillMix identifies bias-inducing video frames using a 2D reference network and mixes them with videos for training, serving as effective bias suppression even when we cannot explicitly extract the source of bias within each video frame or enumerate types of bias. Finally, to precisely evaluate static bias, we synthesize two new benchmarks, SCUBA for static cues in the background, and SCUFO for static cues in the foreground. With extensive experiments, we demonstrate that StillMix mitigates both types of static bias and improves video representations for downstream applications.
  
 
 ---
 
 ## Why Can't I Dance in the Mall? Learning to Mitigate Scene Bias in Action Recognition
+
+https://arxiv.org/abs/1912.05534
 
 ### Basics:
 
@@ -44,71 +61,95 @@ StillMix uses a **2D reference network** to identify frames likely to contain bi
 * **Debiasing Strategy:** Scene-adversarial training plus human-mask confusion loss  (Choi et al., 2019)
 
 
-
 #### Abstract Summary
 
-This paper focuses specifically on **scene bias**, the tendency of action models to exploit recurring scene context instead of action evidence  (Choi et al., 2019). It argues that datasets such as Kinetics contain substantial scene representation bias, so features learned during pre-training may transfer poorly to new classes and tasks if they encode scene shortcuts too strongly  (Choi et al., 2019). The central claim is that suppressing scene predictability during representation learning yields more generalizable action features across downstream problems  (Choi et al., 2019).
+This paper focuses specifically on **scene bias**, the tendency of action models to exploit recurring scene context instead of action evidence. It argues that datasets such as Kinetics contain substantial scene representation bias, so features learned during pre-training may transfer poorly to new classes and new tasks. 
+
+The central claim is that suppressing scene predictability during representation learning yields more generalizable action features for downstream tasks.
 
 #### Specific Debiasing Techniques
 
-The training objective augments standard action cross-entropy with two extra losses  (Choi et al., 2019). First, it adds an **adversarial scene-class loss** that pushes the representation to be uninformative about scene type; because ground-truth scene labels are unavailable, scene labels are approximated using predictions from a pre-trained scene classifier  (Choi et al., 2019). Second, it uses an **entropy-based confusion loss** on videos where humans are masked out, training the network to fail at correct action prediction when the actor evidence is removed  (Choi et al., 2019). The method is explicitly model-agnostic and was shown to improve both a 3D-ResNet-18 and a VGG-16 based pipeline, although the authors note that the final systems still trail stronger state-of-the-art baselines because the underlying backbones are relatively weak  (Choi et al., 2019).
- 
+The training objective augments standard action cross-entropy with two extra losses: 
+1. An **adversarial scene-class loss** that pushes the representation to be uninformative about scene type; because ground-truth scene labels are unavailable, scene labels are approximated using predictions from a pre-trained scene classifier. 
+2. An **entropy-based confusion loss** on videos where humans are masked out, training the network to fail at correct action prediction when the actor evidence is removed. 
 
+The method is explicitly model-agnostic and was shown to improve both a 3D-ResNet-18 and a VGG-16 based pipeline, although the authors note that the final systems still trail stronger state-of-the-art baselines because the underlying backbones are relatively weak (Choi et al., 2019).
+ 
 ---
 
 ## ALBAR: Adversarial Learning approach to mitigate Biases in Action Recognition
 
+https://arxiv.org/abs/2502.00156
+
 ### Basics:
 
-* **Venue & Year:** arXiv 2025  (Fioresi et al., 2025)
-* **Base Dataset(s):** Kinetics-400, UCF101, HMDB51, evaluated with SCUBA and SCUFO bias protocols  (Fioresi et al., 2025)
-* **Dataset Scale:** Not reported in the supplied evidence  (Fioresi et al., 2025)
-* **Classes:** the tasks are generic action recognition with separate background- and foreground-bias evaluation  (Fioresi et al., 2025)
+* **Venue & Year:** ICLR 2025  (Fioresi et al., 2025)
+* **Base Dataset(s):** Kinetics-400, UCF101, HMDB51, evaluated with SCUBA and SCUFO bias protocols
+* **Dataset Scale:** Not reported in the supplied evidence 
+* **Classes:** the tasks are generic action recognition with separate background- and foreground-bias evaluation  
 * **Example Classes:** Not reported in the supplied evidence
 * **Debiasing Strategy:** End-to-end adversarial debiasing on static clips with entropy maximization and gradient penalty  (Fioresi et al., 2025)
 
-
-
 #### Abstract Summary
 
-ALBAR addresses both **background bias** and **foreground bias**, arguing that the literature has emphasized background shortcuts while leaving appearance-related foreground bias less comprehensively studied  (Fioresi et al., 2025). The method is positioned against approaches that need scene or object labels, separate critic models, or off-the-shelf saliency detectors, all of which depend on auxiliary supervision quality  (Fioresi et al., 2025). Its main claim is that static-bias mitigation can be achieved with a single 3D encoder and no attribute annotations, while also improving the evaluation protocol itself  (Fioresi et al., 2025).
+ALBAR addresses both **background bias** and **foreground bias**, arguing that the literature has emphasized background shortcuts while leaving appearance-related foreground bias less comprehensively studied. The method is positioned against approaches that need scene or object labels, separate critic models, or off-the-shelf saliency detectors, all of which depend on auxiliary supervision quality. 
+
+Its main claim is that static-bias mitigation can be achieved with a single 3D encoder and no attribute annotations, while also improving the evaluation protocol itself.
 
 #### Specific Debiasing Techniques
 
-ALBAR samples a frame from each video and repeats it to create a **static clip**, then applies an adversarial cross-entropy loss through negative gradients so the network is penalized for making action predictions from static evidence alone  (Fioresi et al., 2025). An **entropy maximization loss** forces the static-clip predictions toward a uniform class distribution, explicitly discouraging reliance on static cues, and a **gradient penalty** regularizes the debiasing process  (Fioresi et al., 2025). The paper also identifies a shortcut in a prior UCF101 bias protocol, where bounding boxes leaked background information around the actor, and replaces that with segmentation-based boundaries for cleaner foreground-background separation  (Fioresi et al., 2025). It reports state-of-the-art results on SCUBA and SCUFO, including over 12 percent absolute improvement on combined debiasing performance on HMDB51  (Fioresi et al., 2025).
- 
+ALBAR samples a frame from each video and repeats it to create a **static clip**, then applies an adversarial cross-entropy loss through negative gradients so the network is penalized for making action predictions from static evidence alone. 
+- An **entropy maximization loss** forces the static-clip predictions toward a uniform class distribution, explicitly discouraging reliance on static cues, and 
+- a **gradient penalty** regularizes the debiasing process. 
 
+The paper also identifies a shortcut in a prior UCF101 bias protocol, where bounding boxes leaked background information around the actor, and replaces that with segmentation-based boundaries for cleaner fg/bg separation. It reports state-of-the-art results on SCUBA and SCUFO, including over 12 percent absolute improvement on combined debiasing performance on HMDB51 (Fioresi et al., 2025).
+ 
 ---
 
 ## Counterfactual Debiasing Inference for Compositional Action Recognition
 
+https://dl.acm.org/doi/10.1145/3474085.3475472
+
 ### Basics:
 
 * **Venue & Year:** ACM Multimedia 2021  (Sun et al., 2021)
-* **Base Dataset(s):** Something-Else  (Sun et al., 2021)
+* **Base Dataset(s):** Something-Else (Sun et al., 2021)
 * **Dataset Scale:** Not reported in the supplied evidence  (Sun et al., 2021)
 * **Classes:** the task is **compositional action recognition** with verb-noun combinations  (Sun et al., 2021)
-* **Example Classes:** Not reported in the supplied evidence
+* **Example Classes:** tear something, move something.
 * **Debiasing Strategy:** Causal inference with factual and counterfactual branches, called **Counterfactual Debiasing Network**  (Sun et al., 2021)
 
 
 
 #### Abstract Summary
 
-This paper targets **appearance bias** in compositional action recognition, where models must generalize to unseen verb-noun combinations rather than memorizing frequent object-appearance patterns  (Sun et al., 2021). It argues that simply dropping appearance information or naively fusing object appearance with tracklets fails to generalize well to unseen actions  (Sun et al., 2021). The proposed Counterfactual Debiasing Network explicitly models appearance information and then removes its effect through a causal subtraction mechanism, aiming to improve recognition of unseen action instances  (Sun et al., 2021).
+This paper targets **appearance bias** in compositional AR, where models must generalize to unseen verb-noun combinations rather than memorizing frequentt object-appearance patterns. It argues that simply dropping appearance information fails to generalize well to unseen actions. 
+
+The proposed Counterfactual Debiasing Network explicitly models appearance information and then removes its effect through a causal subtraction mechanism, aiming to improve recognition of unseen action instances. (Like the Panaf-fgbg paper)
 
 #### Specific Debiasing Techniques
 
-The framework defines a **factual inference** path that uses both appearance information and structural information derived from tracklets and video content  (Sun et al., 2021). It also defines a **counterfactual inference** path that uses video content with appearance information, isolating the contribution of appearance cues  (Sun et al., 2021). A causal graph then removes appearance bias by subtracting the counterfactual prediction from the factual prediction, thereby estimating action evidence that is less contaminated by object or subject appearance shortcuts  (Sun et al., 2021). The reported result is improved generalization on the Something-Else benchmark relative to prior state-of-the-art methods for unseen compositional actions  (Sun et al., 2021).
+The framework defines 
+- a **factual inference** path that uses both appearance information and structural information derived from tracklets and video content. And 
+- a **counterfactual inference** path that uses video content with appearance information, isolating the contribution of appearance cues. 
+
+A causal graph then removes appearance bias by subtracting the counterfactual prediction from the factual prediction, thereby estimating action evidence that is less contaminated by object appearance shortcuts. The reported result is improved generalization on the Something-Else benchmark relative to prior state-of-the-art methods for unseen compositional actions.
  
+    Tracklet definition:
+
+    An instance tracklet is a short, linked sequence of object masks or bounding boxes representing the exact same individual object across multiple consecutive frames in a video. It forms the core output of Video Instance Segmentation (VIS) tasks, merging spatial object detection and temporal tracking into a unified trajectory. 
+
+    A tracklet is a continuous space-time path (T frames long) for a single unique object instance.
 
 ---
 
 ## RESOUND: Towards Action Recognition Without Representation Bias
 
+
+
 ### Basics:
 
-* **Venue & Year:** 2018, venue not reported in the supplied evidence  (Li & Vasconcelos, 2018)
+* **Venue & Year:** 2018, ECCV  (Li & Vasconcelos, 2018)
 * **Base Dataset(s):** Existing action datasets sampled through Explicit RESOUND, plus the newly guided dataset Diving48  (Li & Vasconcelos, 2018)
 * **Dataset Scale:** Diving48 contains over 18,000 video clips  (Li & Vasconcelos, 2018)
 * **Classes:** 48 unique classes, fine-grained diving actions, which are motion-based rather than generic scene categories  (Li & Vasconcelos, 2018)
