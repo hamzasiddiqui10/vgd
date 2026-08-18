@@ -8,13 +8,7 @@ Following are 7 online academic papers from some repositories (arXiv, CVPR, ICCV
 
 ---
 ---
-### Some additional information
 
-SCUBA and SCUFO are test benchmarks and evaluation protocols used in video AR. They measure "static bias," or shortcut learning, where a model incorrectly relies on fixed background elements or stationary foreground objects instead of actual movement.
-- **SCUBA** evaluates bg bias by replacing or altering the bg behind a moving action clip.
-- **SCUFO** evaluates fg bias by stacking a single static frame to strip away motion cues and test reliance on non-moving elements.
-
-Both benchmarks were introduced alongside debiasing methods like StillMix to help vision models learn true dynamic motion instead of taking shortcuts.
 
 ## Mitigating and Evaluating Static Bias of Action Representations in the Background and the Foreground
 
@@ -44,6 +38,13 @@ In this paper, we empirically verify the existence of foreground static bias by 
 
 Specifically, StillMix identifies bias-inducing video frames using a 2D reference network and mixes them with videos for training, serving as effective bias suppression even when we cannot explicitly extract the source of bias within each video frame or enumerate types of bias. Finally, to precisely evaluate static bias, we synthesize two new benchmarks, SCUBA for static cues in the background, and SCUFO for static cues in the foreground. With extensive experiments, we demonstrate that StillMix mitigates both types of static bias and improves video representations for downstream applications.
  
+
+    SCUBA and SCUFO are test benchmarks and evaluation protocols used in video AR. They measure "static bias," or shortcut learning, where a model incorrectly relies on fixed background elements or stationary foreground objects instead of actual movement.
+    - **SCUBA** evaluates bg bias by replacing or altering the bg behind a moving action clip.
+    - **SCUFO** evaluates fg bias by stacking a single static frame to strip away motion cues and test reliance on non-moving elements.
+
+    Both benchmarks were introduced alongside debiasing methods like StillMix to help vision models learn true dynamic motion instead of taking shortcuts.
+
 
 ---
 
@@ -87,7 +88,6 @@ https://arxiv.org/abs/2502.00156
 * **Base Dataset(s):** Kinetics-400, UCF101, HMDB51, evaluated with SCUBA and SCUFO bias protocols
 * **Dataset Scale:** Not reported in the supplied evidence 
 * **Classes:** the tasks are generic action recognition with separate background- and foreground-bias evaluation  
-* **Example Classes:** Not reported in the supplied evidence
 * **Debiasing Strategy:** End-to-end adversarial debiasing on static clips with entropy maximization and gradient penalty  (Fioresi et al., 2025)
 
 #### Abstract Summary
@@ -145,82 +145,99 @@ A causal graph then removes appearance bias by subtracting the counterfactual pr
 
 ## RESOUND: Towards Action Recognition Without Representation Bias
 
-
+https://link.springer.com/chapter/10.1007/978-3-030-01231-1_32
 
 ### Basics:
 
 * **Venue & Year:** 2018, ECCV  (Li & Vasconcelos, 2018)
-* **Base Dataset(s):** Existing action datasets sampled through Explicit RESOUND, plus the newly guided dataset Diving48  (Li & Vasconcelos, 2018)
+* **Base Dataset(s):** Existing action datasets sampled through Explicit RESOUND, plus the newly guided dataset Diving48 which has videos of divers performing actions.  (Li & Vasconcelos, 2018)
 * **Dataset Scale:** Diving48 contains over 18,000 video clips  (Li & Vasconcelos, 2018)
 * **Classes:** 48 unique classes, fine-grained diving actions, which are motion-based rather than generic scene categories  (Li & Vasconcelos, 2018)
-* **Example Classes:** Not reported in the supplied evidence
 * **Debiasing Strategy:** Dataset calibration and representation-bias minimization through Explicit and Implicit **RESOUND**  (Li & Vasconcelos, 2018)
 
 
 
 #### Abstract Summary
 
-RESOUND is primarily a **dataset and evaluation** paper that formalizes representation bias in action recognition and argues that current benchmarks allow non-ground-truth representations to achieve strong performance  (Li & Vasconcelos, 2018). In the action domain, it concludes that major datasets are biased toward static representations such as objects, scenes, and people, which undermines the goal of learning motion-grounded action models  (Li & Vasconcelos, 2018). The paper frames **dataset calibration** as necessary if benchmark evaluation is to converge toward the intended action representation rather than shortcut cues  (Li & Vasconcelos, 2018).
+RESOUND is primarily a **dataset and evaluation** paper that formalizes representation bias in AR and argues that current benchmarks allow non-ground-truth representations to achieve strong performance. In the action domain, it concludes that major datasets are biased toward static representations such as objects, scenes, and people. 
+
+The paper frames **dataset calibration** as necessary if benchmark evaluation is to converge toward the intended action representation rather than shortcut cues.
 
 #### Specific Debiasing Techniques
 
-RESOUND proposes a procedure to both **quantify** and **minimize** representation bias  (Li & Vasconcelos, 2018). The **Explicit RESOUND** variant assembles improved datasets by sampling from existing datasets to reduce biasing factors  (Li & Vasconcelos, 2018). The **Implicit RESOUND** variant guides new dataset construction, and its main demonstration is Diving48, a fine-grained competitive diving benchmark with over 18,000 clips spanning 48 classes  (Li & Vasconcelos, 2018). The central debiasing mechanism is therefore not a training loss but a calibration procedure that constrains dataset composition so that static cues such as scene, object, or person appearance are less predictive than the motion pattern itself  (Li & Vasconcelos, 2018). Experimental evaluation confirms that this strategy reduces static bias in action recognition datasets  (Li & Vasconcelos, 2018).
- 
+RESOUND proposes a procedure to both **quantify** and **minimize** representation bias. 
 
+- The **Explicit RESOUND** variant assembles improved datasets by sampling from existing datasets to reduce biasing factors. 
+- The **Implicit RESOUND** variant guides new dataset construction (and its main demonstration is Diving48, a fine-grained competitive diving benchmark with over 18,000 clips spanning 48 classes). 
+
+The central debiasing mechanism is therefore not a training loss but a calibration procedure that constrains dataset composition so that static cues such as scene, object, or person appearance are less predictive than the motion pattern itself. Experimental evaluation confirms that this strategy reduces static bias in AR datasets (Li & Vasconcelos, 2018).
+ 
 ---
 
 ## Background no more: Action recognition across domains by causal interventions
+
+note: only bg bias tackled in this paper. Doesnt do anything about object bias.
+
+https://www.sciencedirect.com/science/article/abs/pii/S1077314224000560?via%3Dihub (cant access full paper)
 
 ### Basics:
 
 * **Venue & Year:** Computer Vision and Image Understanding 2024  (Rastegar et al., 2024)
 * **Base Dataset(s):** Two video domain generalization benchmarks, including Kinetics2Mimetics  (Rastegar et al., 2024)
-* **Dataset Scale:** Not reported in the supplied evidence  (Rastegar et al., 2024)
 * **Classes:** the focus is generic action recognition under domain shift  (Rastegar et al., 2024)
-* **Example Classes:** Not reported in the supplied evidence
 * **Debiasing Strategy:** Causal intervention on action and background with source-time and test-time interventions  (Rastegar et al., 2024)
-
 
 
 #### Abstract Summary
 
-This paper addresses **background confounding** under appearance distribution shift between source and target domains, making it a direct fit for static scene-bias mitigation in video action recognition  (Rastegar et al., 2024). Its core claim is that background acts as a confounder for the class label, so the action predictor should intervene on the action representation to separate it from domain-specific appearance  (Rastegar et al., 2024). The problem formulation is explicitly about **video domain generalization**, where shortcut reliance becomes most visible when the target domain differs in appearance from the training domain  (Rastegar et al., 2024).
+This paper addresses **background confounding** under appearance distribution shift between source and target domains, making it a direct fit for static scene-bias mitigation in video action recognition. Its core claim is that background acts as a confounder for the class label, so the action predictor should intervene on the action representation to separate it from domain-specific appearance. 
+
+The problem formulation is explicitly about **video domain generalization**, where shortcut reliance becomes most visible when the target domain differs in appearance from the training domain  (Rastegar et al., 2024).
 
 #### Specific Debiasing Techniques
 
-The method learns a **causally debiased model** on the source domain using three possible do-operator interventions that separate action from background  (Rastegar et al., 2024). It then adds a **test-time action intervention** to better align source and target distributions, extending debiasing beyond training-time regularization alone  (Rastegar et al., 2024). This is a causal alternative to adversarial or augmentation-based approaches: rather than only making static cues harder to exploit, it explicitly models the confounding path between background and label and intervenes on that path  (Rastegar et al., 2024). On two domain generalization benchmarks, it reports state-of-the-art results on Kinetics2Mimetics, which the paper describes as the benchmark with the largest domain shift  (Rastegar et al., 2024).
+The method learns a **causally debiased model** on the source domain using three possible do-operator interventions that separate action from background  (Rastegar et al., 2024). It then adds a **test-time action intervention** to better align source and target distributions, extending debiasing beyond training-time regularization alone. This is a causal alternative to adversarial or augmentation-based approaches: rather than only making static cues harder to exploit, it explicitly models the confounding path between background and label and intervenes on that path. On two domain generalization benchmarks, it reports state-of-the-art results on Kinetics2Mimetics, which the paper describes as the benchmark with the largest domain shift (Rastegar et al., 2024).
  
 
 ---
 
 ## Mitigating Representation Bias in Action Recognition: Algorithms and Benchmarks
 
+https://arxiv.org/abs/2209.09393
+
 ### Basics:
 
-* **Venue & Year:** 2022, venue not reported in the supplied evidence  (Duan et al., 2022)
-* **Base Dataset(s):** Kinetics-400 re-distributed splits, ARAS, downstream transfer datasets, and external web media for OmniDebias  (Duan et al., 2022)
-* **Dataset Scale:** Not reported in the supplied evidence  (Duan et al., 2022)
-* **Classes:** the work targets generic action recognition with rare-scene and rare-object shifts  (Duan et al., 2022)
-* **Example Classes:** Not reported in the supplied evidence
-* **Debiasing Strategy:** Spatial-aware Multi-Aspect Debiasing, plus selective web-data augmentation via **OmniDebias**  (Duan et al., 2022)
-
-
+* **Venue & Year:** ECCVW 2022 / arXiv 2022
+* **Base Dataset(s):** Kinetics-400 (re-distributed splits), UCF101, Something-Something v2, and Action with RAre Scene (ARAS)
+* **Dataset Scale:** Kinetics-400 contains approximately 240,000 video clips (around 650 hours). The newly introduced ARAS evaluation set contains 1,038 video clips sampled from 920 untrimmed YouTube videos.
+* **Classes:** 400 unique classes in Kinetics-400; 104 evaluation classes in ARAS (Generic activities, human-object interactions, and scene-associated human actions).
+* **Example Classes:** Playing basketball, swimming, playing accordion, skateboarding, riding a bike.
+* **Debiasing Strategy:** Spatial-aware Multi-Aspect Debiasing (SMAD) combining explicit multi-aspect adversarial training and implicit spatial actionness reweighting, alongside OmniDebias web data augmentation.
 
 #### Abstract Summary
 
-This paper treats representation bias as a broader problem than scene bias alone, emphasizing that action datasets often fail on videos with **rare scenes or objects** because models learn non-action facets that are spuriously predictive in the training distribution  (Duan et al., 2022). The work tackles bias from both the **algorithmic** side and the **dataset** side, combining a generic debiasing framework with selective external-data augmentation  (Duan et al., 2022). It also builds evaluation protocols, including facet-based train-test redistribution on Kinetics-400 and the ARAS dataset focused on actions with rare scenes, to measure out-of-distribution robustness more faithfully  (Duan et al., 2022).
+AR models often rely on static bg scenes and non-action object cues rather than dynamic human motion. This causes poor generalization. To address this issue, the paper proposes a joint framework tackling bias from both algorithmic and dataset perspectives. 
+
+- Algorithmic perspective: it introduces Spatial-aware Multi-Aspect Debiasing (SMAD), which incorporates explicit multi-aspect adversarial training alongside an implicit spatial actionness reweighting module to force representations to be invariant to non-action visual attributes. 
+- Dataset perspective: it proposes OmniDebias, a strategy to selectively leverage web data to neutralize intrinsic dataset biases with high data efficiency. 
+
+The authors establish re-distributed evaluation splits on existing benchmarks as well as a new OOD evaluation dataset called 'Action with RAre Scene' (ARAS) to systematically evaluate scene and appearance debiasing.
 
 #### Specific Debiasing Techniques
 
-The proposed **SMAD** framework combines **multi-aspect adversarial training** with **Spatial-Aware Actionness Reweighting**  (Duan et al., 2022). Multi-aspect adversarial training extends prior single-factor debiasing methods by enforcing invariance to multiple non-action facets, including background scene and interacted object, rather than assuming one known bias source  (Duan et al., 2022)<paper_cite sid="S
+The paper implements a multi-pronged strategy to disentangle dynamic action signals from static background shortcuts:
+
+* **Explicit Multi-Aspect Adversarial Training:** Auxiliary classification heads are trained to predict non-action attributes such as background scene category. Adversarial learning via gradient reversal layers forces the primary feature extractor to remove scene-discriminative information, producing representations that are invariant to static background context.
+* **Implicit Spatial Actionness Reweighting:** A spatial attention mechanism estimates local actionness scores across feature maps to highlight regions containing active human movement. The module reweights spatial feature maps, suppressing background clutter and prioritizing visual regions directly involved in human motion and interactions.
+* **OmniDebias Web-Data Selection:** To address dataset-level co-occurrence bias where specific actions only appear in standard settings, OmniDebias mines web video data. A teacher filter automatically extracts supplementary training clips containing rare action-scene combinations, balancing the dataset distribution without requiring manual frame-level annotation.
+* **OOD Benchmark Protocol:** The paper introduces the Action with RAre Scene (ARAS) dataset (104 classes, 1,038 clips) containing human actions occurring in atypical settings (such as playing basketball in a bedroom). Combined with re-distributed scene splits of Kinetics-400, this setup provides a benchmark for evaluating model invariance to static appearance shortcuts.
 
 
 
 
+---
+---
 
- ---
-_These search results were found and analyzed using Consensus, an AI-powered search engine for research. Try it at https://consensus.app. © 2026 Consensus NLP, Inc. Personal, non-commercial use only; redistribution requires copyright holders’ consent._
- 
 ## References
  
 Choi, J., Gao, C., Messou, J. C. E., & Huang, J.-B. (2019). Why Can't I Dance in the Mall? Learning to Mitigate Scene Bias in Action Recognition. *ArXiv, abs/1912.05534*. https://doi.org/10.48550/arxiv.1912.05534
