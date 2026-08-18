@@ -10,8 +10,48 @@ For each paper, you will find:
 6. Technique to Create Synthetic Dataset: If this paper gives a strategy to create a synthetic dataset it is mentioned.
 
 ---
+---
+
+# Papers:
+${\color{green} * }$ EPIC-Kitchens D1/D2/D3: Multi-Modal Domain Adaptation for Fine-Grained Action Recognition
+
+${\color{green} * }$ ARGO1M: What can a cook in Italy teach a mechanic in India? Action Recognition Generalisation Over Scenarios and Locations
+
+
+${\color{green} * }$ Something-Else: Compositional Action Recognition with Spatial-Temporal Interaction Networks
+
+
+${\color{green} * }$ RareAct: A Video Dataset of Unusual Interactions
+
+${\color{green} * }$ Ego-Exo4D: Understanding Skilled Human Activity from First- and Third-Person Perspectives
+
+
+
+${\color{yellow} * }$ EPIC-Kitchens-100 UDA challenge - Rescaling Egocentric Vision: Collection Pipeline and Challenges for EPIC-KITCHENS-100
+
+
+${\color{yellow} * }$ Sims4Action - Let's Play for Action: Recognizing Activities of Daily Living by Learning from Life Simulation Video Games
+
+
+
+${\color{yellow} * }$ ActorShift: Audio-Adaptive Activity Recognition Across Video Domains
+
+
+${\color{yellow} * }$ Human-Animal-Cartoon (HAC) - SimMMDG: A Simple and Effective Framework for Multi-modal Domain Generalization
+
+${\color{yellow} * }$ SomethingSomething-DG - VideoDG: Generalizing Temporal Relations in Videos to Novel Domains
+
+${\color{yellow} * }$ Human-centric Analysis Toolkit (HAT) - Enabling Detailed Action Recognition Evaluation Through Video Dataset Augmentation
+
+
+${\color{yellow} * }$ Charades-Ego - Actor and Observer: Joint Modeling of First and Third-Person Videos
+
+${\color{yellow} * }$ Charades-Ego - A Large-Scale Dataset of Paired Third and First Person Videos (Dataset Report)
 
 ---
+---
+
+
 
 
 ## ${\color{green} * }$ EPIC-Kitchens D1/D2/D3: Multi-Modal Domain Adaptation for Fine-Grained Action Recognition
