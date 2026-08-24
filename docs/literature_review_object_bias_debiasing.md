@@ -1,8 +1,10 @@
 # Object-Bias in Video AR models
 
-Video action recognition, models often suffer from object bias, static bias, or appearance bias—where static background objects or scene context (nouns) dominate model predictions rather than temporal motion and interactions (verbs), leading to poor domain generalization.
+Video action recognition, models often suffer from object bias, static bias, or appearance bias: where static background objects or scene context (nouns) dominate model predictions rather than temporal motion and interactions (verbs), leading to poor domain generalization.
 
-Following are 7 online academic papers from some repositories (arXiv, CVPR, ICCV, ECCV, NeurIPS, IEEE TPAMI) that directly address object bias, static appearance bias, or visual shortcut learning in video action recognition models and datasets.
+Following are 7 online academic papers from some repositories (arXiv, CVPR, ICCV, ECCV, NeurIPS, IEEE, TPAMI) that directly address object bias, static appearance bias, or visual shortcut learning in video action recognition models and datasets.
+
+consensus.app was used to find the papers relevant to my research.
 
 
 
