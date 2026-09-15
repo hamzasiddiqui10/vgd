@@ -8,6 +8,14 @@
 *.h5
 *.pkl
 *.csv
+*.pt
+*.webm
+*.mp4
+*.wandb
+*.json
+
+experiment_ssv2_object_occlusion/stripped_down/
+
 
 
 # Mac OS-specific storage files

@@ -143,15 +143,16 @@ def build_model(args, feat_shape):
     spatial_size = int(round(num_patches ** 0.5))
     assert spatial_size ** 2 == num_patches, f"{num_patches} patch tokens are not a square grid"
 
-    head = ActionHeadLinear(num_classes=args.num_classes, dim_embed=dim, layer_norm=args.head_layer_norm)
+    # head = ActionHeadLinear(num_classes=args.num_classes, dim_embed=dim, layer_norm=args.head_layer_norm)
     return AttentiveProbe(
-        head=head,
+        # head=head,
         dim_embed=dim,
         num_frames=num_frames,
         spatial_size=spatial_size,
         num_heads=args.num_heads,
         pos_enc=not args.no_pos_enc,
         feature_key="dino_feat",
+        num_classes=args.num_classes
     )
 
 
@@ -238,6 +239,8 @@ def main():
         "top1_bal": MulticlassAccuracy(num_classes=args.num_classes, average="macro").to(device),
     }
 
+    os.environ["HTTPS_PROXY"] = "http://www-cache.gwdg.de:3128"
+    os.environ["HTTP_PROXY"] = "http://www-cache.gwdg.de:3128"
     wandb.init(project=args.wandb_project, name=args.run_name, config=vars(args),
                dir=run_dir, mode="disabled" if args.no_wandb else "online")
     print(f"run dir: {run_dir}")

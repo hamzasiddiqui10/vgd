@@ -17,10 +17,13 @@ Rows are written in annotation-file order, so an interrupted run can be resumed
 by simply re-running the same command.
 
 Example:
-    python stripped_down/extract.py \
-        --annotations train:/path/ssv2/labels/train.txt val:/path/ssv2/labels/val.txt \
-        --image_dir /path/ssv2/center_frames \
-        --out /path/ssv2-dinov2-large-center.h5
+    python extract.py \
+        --annotations train:data/train.txt val:data/val.txt \
+        --image_dir $COLD/felixbm/ssv2_center_frame_occluding_objects/frames/ \
+        --out data/extracted_features/ssv2-center-dinov2-unoccluded.h5 \
+        --batch_size 32 \
+        --num_workers 14
+
 """
 
 import argparse
@@ -73,7 +76,7 @@ class CenterFrameDataset(Dataset):
 
     def __getitem__(self, idx):
         name, label = self.samples[idx]
-        img = Image.open(os.path.join(self.image_dir, 
+        img = Image.open(os.path.join(self.image_dir,
                                       "projects_extern_nhr_nhr_ni_nib00021_dir.project_data_public_ssv2_clips_" 
                                       + name + self.image_ext)).convert("RGB")
         return self.transform(img), label
@@ -142,7 +145,7 @@ def main():
     args = p.parse_args()
 
     splits = dict(a.split(":", 1) for a in args.annotations)
-    device = torch.device(args.device)
+    device = torch.device(args.device); print(f"{device=}")
 
     model = timm.create_model(args.model, pretrained=True, num_classes=0, dynamic_img_size=True)
     model = model.to(device).eval()
