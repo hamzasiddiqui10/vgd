@@ -9,7 +9,16 @@ Every run gets its own directory `<out_dir>/<run_name>/` containing:
     best.pt      checkpoint of the epoch with the best val top-1 accuracy
 
 Example:
-    python stripped_down/train.py --h5 /path/ssv2-dinov2-large-center.h5 --run_name probe_lr1e-4
+    python train.py \
+        --h5 data/extracted_features/ssv2-center-dinov2-unoccluded.h5 \
+        --run_name baseline_test_2 \
+        --epochs 25 \
+        --lr 0.0002 \
+        --batch_size 512 \
+        --num_workers 15
+
+*Hamza: use vbbnew conda env to run this train.py*
+
 """
 
 import argparse

@@ -16,7 +16,7 @@ Layout of the output file:
 Rows are written in annotation-file order, so an interrupted run can be resumed
 by simply re-running the same command.
 
-Example:
+Example (unoccluded):
     python extract.py \
         --annotations train:data/train.txt val:data/val.txt \
         --image_dir $COLD/felixbm/ssv2_center_frame_occluding_objects/frames/ \
@@ -24,11 +24,22 @@ Example:
         --batch_size 32 \
         --num_workers 14
 
+Example (occluded – blacks out SAM3 bounding boxes before DINOv2):
+    python extract.py \
+        --annotations train:data/train.txt val:data/val.txt \
+        --image_dir $COLD/felixbm/ssv2_center_frame_occluding_objects/frames/ \
+        --out data/extracted_features/ssv2-center-dinov2-bbox-occluded.h5 \
+        --coco_json data/annotations_score0.2_nms0.15.coco.json \
+        --occlusion \
+        --batch_size 32 \
+        --num_workers 14
+
 """
+import os
+os.environ["HF_HUB_OFFLINE"] = "1"
 
 import argparse
 import json
-import os
 from pathlib import Path
 
 import h5py
@@ -82,9 +93,79 @@ class CenterFrameDataset(Dataset):
         return self.transform(img), label
 
 
+class CenterFrameOccludedDataset(CenterFrameDataset):
+    """Like CenterFrameDataset, but blacks out SAM3 detected bounding boxes.
+
+    Before the standard transform pipeline the bounding box regions from the
+    COCO annotation file (SAM3 detections) are filled with black (0, 0, 0) on
+    the raw PIL image.  All annotations whose ``image_id`` maps to this clip's
+    file_name are applied.  If a clip has no detections it is passed through
+    unchanged.
+
+    Args:
+        coco_json: Path to the COCO-format annotation JSON produced by SAM3
+            (e.g. ``data/annotations_score0.2_nms0.15.coco.json``).
+        annotation_file: Same SSv2 split file as used by the parent class.
+        image_dir: Directory containing the center-frame JPGs.
+        image_size: Target square size fed to DINOv2 (default 224).
+        image_ext: Extension of the frame files (default ``.jpg``).
+    """
+
+    FILE_NAME_PREFIX = "projects_extern_nhr_nhr_ni_nib00021_dir.project_data_public_ssv2_clips_"
+
+    def __init__(self, coco_json, annotation_file, image_dir, image_size=224, image_ext=".jpg"):
+        super().__init__(annotation_file, image_dir, image_size, image_ext)
+
+        # Build a mapping: file_name (str) -> list of [x, y, w, h] bboxes.
+        # We parse the JSON once here so __getitem__ is free of I/O overhead.
+        print(f"Loading COCO annotations from {coco_json} ...")
+        with open(coco_json) as f:
+            coco = json.load(f)
+
+        # id -> file_name lookup
+        id_to_filename = {img["id"]: img["file_name"] for img in coco["images"]}
+
+        self._bboxes: dict[str, list] = {}  # file_name -> [[x,y,w,h], ...]
+        for ann in coco["annotations"]:
+            fname = id_to_filename[ann["image_id"]]
+            self._bboxes.setdefault(fname, []).append(ann["bbox"])
+
+        print(f"  Loaded bboxes for {len(self._bboxes)} images "
+              f"({sum(len(v) for v in self._bboxes.values())} total detections).")
+
+        self.transform = T.Compose([
+            T.Resize(image_size, interpolation=T.InterpolationMode.BICUBIC),
+            T.CenterCrop(image_size),
+            T.ToTensor(),
+            T.Normalize(IMAGENET_MEAN, IMAGENET_STD),
+        ])
+
+    def __getitem__(self, idx):
+        name, label = self.samples[idx]
+        file_name = self.FILE_NAME_PREFIX + name + self.image_ext
+
+        img = Image.open(os.path.join(self.image_dir, file_name)).convert("RGB")
+
+        # Black out every SAM3-detected bounding box on the raw PIL image.
+        bboxes = self._bboxes.get(file_name, [])
+        if bboxes:
+            from PIL import ImageDraw
+            draw = ImageDraw.Draw(img)
+            for x, y, w, h in bboxes:
+                # COCO bbox: [x_min, y_min, width, height] -> clamp to image bounds
+                x0, y0 = int(x), int(y)
+                x1, y1 = int(x + w), int(y + h)
+                draw.rectangle([x0, y0, x1, y1], fill=(0, 0, 0))
+
+        return self.transform(img), label
+
+
 @torch.inference_mode()
 def extract_split(model, args, split, annotation_file, f_out, device):
-    dataset = CenterFrameDataset(annotation_file, args.image_dir, args.image_size)
+    if args.occlusion:
+        dataset = CenterFrameOccludedDataset(args.coco_json, annotation_file, args.image_dir, args.image_size)
+    else:
+        dataset = CenterFrameDataset(annotation_file, args.image_dir, args.image_size)
     num_samples = len(dataset)
 
     # one dummy forward to learn the token grid / feature dim
@@ -142,7 +223,14 @@ def main():
     p.add_argument("--batch_size", type=int, default=64)
     p.add_argument("--num_workers", type=int, default=8)
     p.add_argument("--device", default="cuda")
+    p.add_argument("--occlusion", action="store_true",                                                                                                                                                                                                   
+                    help="If set, black out SAM3 bounding boxes on each frame before DINOv2 feature extraction.")                                                                                                                                         
+    p.add_argument("--coco_json", default=None,                                                                                                                                                                                                          
+                    help="Path to the COCO-format JSON file with SAM3 detections. Required when --occlusion is set.")     
     args = p.parse_args()
+
+    if args.occlusion and not args.coco_json:                                                                                                                                                                                                            
+        p.error("--coco_json is required when --occlusion is set.")   
 
     splits = dict(a.split(":", 1) for a in args.annotations)
     device = torch.device(args.device); print(f"{device=}")
@@ -159,3 +247,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
