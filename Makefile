@@ -42,7 +42,6 @@ interactive_small20gb:
 interactive_small40gb: 
 	srun --pty -t 0-12:00:00 -p grete:interactive -G 3g.40gb  -C inet --cpus-per-task=16 --mem=64GB /bin/bash
 
-
 interactive_small2g: 
 	srun --pty -t 0-12:00:00 -p grete:interactive -G 2g.10gb  -C inet --cpus-per-task=8 --mem=32GB /bin/bash
 
