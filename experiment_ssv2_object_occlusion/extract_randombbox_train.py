@@ -257,8 +257,8 @@ def extract_split(model, args, split, annotation_file, f_out, device):
             dataset = CenterFrameRandomBboxDataset(args.coco_json, annotation_file, args.image_dir, args.image_size)
         else:
             # Val / test: black out the image's own SAM3 bboxes (original behaviour).
-            # dataset = CenterFrameOccludedDataset(args.coco_json, annotation_file, args.image_dir, args.image_size) 
-            dataset = CenterFrameRandomBboxDataset(args.coco_json, annotation_file, args.image_dir, args.image_size) ### This is for final run to make random occlusion on both train and val. ## REMOVE this at end.
+            dataset = CenterFrameOccludedDataset(args.coco_json, annotation_file, args.image_dir, args.image_size) 
+            # dataset = CenterFrameRandomBboxDataset(args.coco_json, annotation_file, args.image_dir, args.image_size) ### This is for final run to make random occlusion on both train and val. ## REMOVE this at end.
     else:
         dataset = CenterFrameDataset(annotation_file, args.image_dir, args.image_size)
     num_samples = len(dataset)
