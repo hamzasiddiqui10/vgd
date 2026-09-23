@@ -1,35 +1,44 @@
 """
-Run V-JEPA 2 (facebook/vjepa2-vitg-fpc64-384-ssv2) inference on custom .avi videos.
+Run V-JEPA 2 (facebook/vjepa2-vitg-fpc64-384-ssv2) inference on custom .avi videos,
+optionally constrained to a subset of classes (e.g. 10 classes).
 
 Videos are indexed by a CSV with columns: id, template, placeholders, session, cam.
 For each row, the video file is located at:
     {video_dir}/{id}_{cam}.avi
   e.g. /path/to/videos/260922-134214_cam0.avi
 
+When constrained (e.g. using data/template2id_mapping_only10classes.txt):
+  - Model outputs full 174 logits.
+  - Phase 2 extracts the relevant class logits corresponding to the target mapping.
+  - Softmax probabilities and predictions are computed over the constrained class subspace.
+
 Outputs (saved to --output_dir):
   - logits_output.npz          : compressed NumPy archive with all logits + metadata
-  - logits_output_meta.parquet : tabular metadata (video_id, cam, template, label,
-                                  top1_pred, top1_class, top1_conf, top5_preds)
+  - logits_output_meta.parquet : tabular metadata (video_id, cam, session, template, label,
+                                  top1_pred, top1_class, top1_conf, top5_preds, etc.)
   - skipped_videos.txt         : list of videos that failed to decode (if any)
+  - logits_manifest.json       : run manifest with configuration and summary metrics
 
 The .npz format stores:
-  logits     (N, 174) float32  — raw model logits for all 174 SSv2 classes
-  probs      (N, 174) float32  — softmax probabilities
-  labels     (N,)    int16    — ground-truth class IDs  (-1 if template unknown)
-  video_ids  (N,)    object   — recording IDs  (e.g. "260922-134214")
-  cams       (N,)    object   — camera views   (e.g. "cam0")
-  templates  (N,)    object   — SSv2 template string
-  class_names (174,) object   — ordered class name strings (index = class ID)
+  logits      (N, num_classes) float32  — logits for the target classes
+  probs       (N, num_classes) float32  — softmax probabilities
+  labels      (N,)            int16    — ground-truth class IDs (-1 if template unknown)
+  video_ids   (N,)            object   — recording IDs (e.g. "260922-134214")
+  cams        (N,)            object   — camera views (e.g. "cam0")
+  templates   (N,)            object   — SSv2 template string
+  class_names (num_classes,)  object   — ordered class name strings (index = class ID)
 
 Usage:
   python scripts/vjepa_on_myvideos.py \
-      --csv_path      data/index_df.csv \
-      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/raw/ \
-      --mapping_path  data/template2id_mapping.txt \
-      --output_dir    results \
-      --batch_size    8 \
-      --num_workers   8
-      
+      --csv_path           data/index_df.csv \
+      --video_dir          /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/raw \
+      --mapping_path       data/template2id_mapping_only10classes.txt \
+      --full_mapping_path  data/template2id_mapping.txt \
+      --output_dir         results_myvideos \
+      --batch_size         8 \
+      --num_workers        16
+
+
 """
 
 import argparse
@@ -45,6 +54,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import AutoModelForVideoClassification, AutoVideoProcessor
+from sklearn.metrics import balanced_accuracy_score
 
 
 # ---------------------------------------------------------------------------
@@ -53,32 +63,29 @@ from transformers import AutoModelForVideoClassification, AutoVideoProcessor
 
 def load_template_mapping(mapping_path: str) -> tuple[dict[str, int], list[str]]:
     """
-    Parse template2id_mapping.txt into:
-      - {template_string: class_id}  (dict, for lookup)
-      - class_names list             (list[str], index = class_id, length 174)
-
-    File format (tab-separated):
-      0\tApproaching [something] with your camera
-      1\tAttaching [something] to [something]
-      ...
+    Parse a template mapping file (tab or whitespace separated) into:
+      - template_to_id: {template_string: class_id}
+      - class_names: list of template strings indexed by class_id
     """
     mapping: dict[str, int] = {}
     id_to_name: dict[int, str] = {}
 
-    with open(mapping_path, "r") as f:
+    with open(mapping_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
                 continue
-            parts = line.split("\t", 1)
+            if "\t" in line:
+                parts = line.split("\t", 1)
+            else:
+                parts = line.split(" ", 1)
             if len(parts) == 2:
-                class_id = int(parts[0])
+                class_id = int(parts[0].strip())
                 template = parts[1].strip()
                 mapping[template] = class_id
                 id_to_name[class_id] = template
 
-    # Build ordered list (index = class_id)
-    num_classes = max(id_to_name.keys()) + 1
+    num_classes = max(id_to_name.keys()) + 1 if id_to_name else 0
     class_names = [id_to_name.get(i, f"UNKNOWN_{i}") for i in range(num_classes)]
     return mapping, class_names
 
@@ -158,6 +165,39 @@ def decode_video_frames(video_path: str, num_frames: int = 64) -> np.ndarray | N
 
 
 # ---------------------------------------------------------------------------
+# Metric helpers
+# ---------------------------------------------------------------------------
+
+def balanced_top_k_accuracy(
+    all_preds_top1: list[int],
+    all_preds_top5: list[list[int]],
+    all_labels: list[int],
+    num_classes: int,
+) -> tuple[float, float]:
+    """
+    Compute macro-averaged recall for top-1 and top-5 predictions.
+    """
+    labels_arr = np.array(all_labels)
+
+    # Top-1 balanced accuracy
+    preds_top1_arr = np.array(all_preds_top1)
+    ba_top1 = balanced_accuracy_score(labels_arr, preds_top1_arr)
+
+    # Top-5 balanced accuracy: re-map predictions so that if true label is
+    # in top-5 we credit it as correct (i.e., set pred = true label).
+    preds_top5_adjusted = []
+    for i, gt in enumerate(all_labels):
+        if gt in all_preds_top5[i]:
+            preds_top5_adjusted.append(gt)
+        else:
+            preds_top5_adjusted.append(all_preds_top5[i][0])  # top-1 prediction
+    preds_top5_arr = np.array(preds_top5_adjusted)
+    ba_top5 = balanced_accuracy_score(labels_arr, preds_top5_arr)
+
+    return ba_top1, ba_top5
+
+
+# ---------------------------------------------------------------------------
 # Dataset
 # ---------------------------------------------------------------------------
 
@@ -188,7 +228,7 @@ class MyVideosDataset(Dataset):
         video_id = str(row["id"])
         cam = str(row["cam"])
         template = str(row["template"])
-        session = str(row["session"])
+        session = str(row["session"]) if "session" in row else ""
         label = self.template_to_id.get(template, -1)
 
         video_path = self.video_dir / f"{video_id}_{cam}.avi"
@@ -218,12 +258,12 @@ def collate_fn(batch: list[dict]) -> dict:
         return {"failed_paths": failed}
 
     return {
-        "video_ids":   [item["video_id"]   for item in valid],
-        "cams":        [item["cam"]        for item in valid],
-        "sessions":    [item["session"]    for item in valid],
-        "templates":   [item["template"]   for item in valid],
-        "labels":      [item["label"]      for item in valid],
-        "frames_list": [item["frames"]     for item in valid],  # list of (T, H, W, C)
+        "video_ids":    [item["video_id"]   for item in valid],
+        "cams":         [item["cam"]        for item in valid],
+        "sessions":     [item["session"]    for item in valid],
+        "templates":    [item["template"]   for item in valid],
+        "labels":       [item["label"]      for item in valid],
+        "frames_list":  [item["frames"]     for item in valid],  # list of (T, H, W, C)
         "failed_paths": failed,
     }
 
@@ -243,14 +283,30 @@ def run_inference(args: argparse.Namespace) -> None:
         print(f"  GPU: {torch.cuda.get_device_name(device)}")
         print(f"  VRAM: {torch.cuda.get_device_properties(device).total_memory / 1e9:.1f} GB")
 
-    # ---- Template mapping ----
-    print(f"\nLoading template mapping: {args.mapping_path}")
+    # ---- Load full 174 mapping ----
+    print(f"Loading full mapping from: {args.full_mapping_path}")
+    template_to_id_174, class_names_174 = load_template_mapping(args.full_mapping_path)
+    print(f"  Loaded {len(template_to_id_174)} full class templates.")
+
+    # ---- Load target mapping (e.g. 10 classes) ----
+    print(f"Loading target mapping from: {args.mapping_path}")
     template_to_id, class_names = load_template_mapping(args.mapping_path)
     num_classes = len(class_names)
-    print(f"  {len(template_to_id)} templates loaded, {num_classes} total classes.")
+    print(f"  Loaded {len(template_to_id)} target templates (subspace size = {num_classes}).")
+
+    # Prepare extraction indices if target subspace is a subset of 174 classes
+    target_indices_tensor = None
+    if num_classes < len(class_names_174):
+        target_indices_in_174 = [
+            template_to_id_174[class_names[i]] for i in range(num_classes)
+        ]
+        target_indices_tensor = torch.tensor(target_indices_in_174, dtype=torch.long, device=device)
+        print(f"  Constraining model logits: 174 -> {num_classes} classes.")
+        for i, idx174 in enumerate(target_indices_in_174):
+            print(f"    Target ID {i} -> Model Logit Index {idx174}: '{class_names[i]}'")
 
     # ---- CSV ----
-    print(f"Loading CSV: {args.csv_path}")
+    print(f"\nLoading CSV: {args.csv_path}")
     df = pd.read_csv(args.csv_path)
     print(f"  Rows: {len(df)}  |  Unique IDs: {df['id'].nunique()}  |  Cams: {df['cam'].unique().tolist()}")
 
@@ -305,8 +361,8 @@ def run_inference(args: argparse.Namespace) -> None:
     all_sessions:  list[str]        = []
     all_templates: list[str]        = []
     all_labels:    list[int]        = []
-    all_logits:    list[np.ndarray] = []   # each: (B, 174) float32
-    all_probs:     list[np.ndarray] = []   # each: (B, 174) float32
+    all_logits:    list[np.ndarray] = []   # each: (B, num_classes) float32
+    all_probs:     list[np.ndarray] = []   # each: (B, num_classes) float32
     failed_paths:  list[str]        = []
 
     # ---- Inference loop ----
@@ -331,14 +387,30 @@ def run_inference(args: argparse.Namespace) -> None:
         sessions    = batch["sessions"]
         templates   = batch["templates"]
 
+        # Filter out invalid labels (-1) if any
+        valid_mask = [lbl >= 0 for lbl in labels]
+        if not any(valid_mask):
+            continue
+
+        valid_frames    = [frames_list[i] for i, ok in enumerate(valid_mask) if ok]
+        valid_labels    = [labels[i]      for i, ok in enumerate(valid_mask) if ok]
+        valid_video_ids = [video_ids[i]   for i, ok in enumerate(valid_mask) if ok]
+        valid_cams      = [cams[i]        for i, ok in enumerate(valid_mask) if ok]
+        valid_sessions  = [sessions[i]    for i, ok in enumerate(valid_mask) if ok]
+        valid_templates = [templates[i]   for i, ok in enumerate(valid_mask) if ok]
+
         try:
             # AutoVideoProcessor: center-crop to 384×384 + SSv2 normalization
-            inputs = processor(frames_list, return_tensors="pt")
+            inputs = processor(valid_frames, return_tensors="pt")
             inputs = {k: v.to(device) for k, v in inputs.items()}
 
             with torch.no_grad(), torch.cuda.amp.autocast(dtype=torch.bfloat16):
                 outputs = model(**inputs)
                 logits = outputs.logits  # (B, 174) bfloat16
+
+            # Phase 2: Constrain predictions to the target class subspace
+            if target_indices_tensor is not None:
+                logits = logits.index_select(dim=-1, index=target_indices_tensor)  # (B, num_classes)
 
             # Cast to float32 on CPU before storing
             logits_f32 = logits.float().cpu()
@@ -346,17 +418,17 @@ def run_inference(args: argparse.Namespace) -> None:
 
             all_logits.append(logits_f32.numpy())
             all_probs.append(probs_f32.numpy())
-            all_video_ids.extend(video_ids)
-            all_cams.extend(cams)
-            all_sessions.extend(sessions)
-            all_templates.extend(templates)
-            all_labels.extend(labels)
+            all_video_ids.extend(valid_video_ids)
+            all_cams.extend(valid_cams)
+            all_sessions.extend(valid_sessions)
+            all_templates.extend(valid_templates)
+            all_labels.extend(valid_labels)
 
         except Exception as e:
             tqdm.write(f"  [WARN] Batch inference error: {e}")
-            tqdm.write(f"         Skipping {len(video_ids)} sample(s): {video_ids}")
+            tqdm.write(f"         Skipping {len(valid_video_ids)} sample(s): {valid_video_ids}")
             failed_paths.extend(
-                [f"{vid}_{cam}" for vid, cam in zip(video_ids, cams)]
+                [f"{vid}_{cam}" for vid, cam in zip(valid_video_ids, valid_cams)]
             )
 
     elapsed = time.time() - t0
@@ -364,13 +436,14 @@ def run_inference(args: argparse.Namespace) -> None:
     n_fail = len(failed_paths)
 
     # ---- Stack arrays ----
-    logits_arr    = np.concatenate(all_logits, axis=0).astype(np.float32)   # (N, 174)
-    probs_arr     = np.concatenate(all_probs,  axis=0).astype(np.float32)   # (N, 174)
+    logits_arr    = np.concatenate(all_logits, axis=0).astype(np.float32)   # (N, num_classes)
+    probs_arr     = np.concatenate(all_probs,  axis=0).astype(np.float32)   # (N, num_classes)
     labels_arr    = np.array(all_labels,    dtype=np.int16)                  # (N,)
     video_ids_arr = np.array(all_video_ids, dtype=object)                    # (N,)
     cams_arr      = np.array(all_cams,      dtype=object)                    # (N,)
+    sessions_arr  = np.array(all_sessions,  dtype=object)                    # (N,)
     templates_arr = np.array(all_templates, dtype=object)                    # (N,)
-    class_names_arr = np.array(class_names, dtype=object)                    # (174,)
+    class_names_arr = np.array(class_names, dtype=object)                    # (num_classes,)
 
     # ---- Save outputs ----
     os.makedirs(args.output_dir, exist_ok=True)
@@ -384,15 +457,17 @@ def run_inference(args: argparse.Namespace) -> None:
         labels      = labels_arr,
         video_ids   = video_ids_arr,
         cams        = cams_arr,
+        sessions    = sessions_arr,
         templates   = templates_arr,
         class_names = class_names_arr,
     )
     print(f"\nNPZ saved: {npz_path}  (shape: {logits_arr.shape})")
 
     # 2. Parquet — metadata table for easy per-class / per-cam analysis
-    top5_indices = np.argsort(logits_arr, axis=1)[:, -5:][:, ::-1]   # (N, 5) descending
-    top1_indices = top5_indices[:, 0]                                  # (N,)
-    top1_conf    = probs_arr[np.arange(n_ok), top1_indices]           # (N,) float32
+    k_top = min(5, num_classes)
+    top5_indices = np.argsort(logits_arr, axis=1)[:, -k_top:][:, ::-1]   # (N, k_top) descending
+    top1_indices = top5_indices[:, 0]                                    # (N,)
+    top1_conf    = probs_arr[np.arange(n_ok), top1_indices]             # (N,) float32
 
     meta_df = pd.DataFrame({
         "video_id":    all_video_ids,
@@ -403,7 +478,7 @@ def run_inference(args: argparse.Namespace) -> None:
         "top1_pred":   top1_indices.tolist(),
         "top1_class":  [class_names[i] for i in top1_indices],
         "top1_conf":   top1_conf.tolist(),
-        "top5_preds":  top5_indices.tolist(),               # stored as list-of-list
+        "top5_preds":  top5_indices.tolist(),
         "top5_classes": [
             [class_names[j] for j in row] for row in top5_indices
         ],
@@ -424,47 +499,57 @@ def run_inference(args: argparse.Namespace) -> None:
             f.write("\n".join(failed_paths) + "\n")
         print(f"Skipped log: {skip_path}  ({n_fail} entries)")
 
+    # ---- Compute accuracy metrics ----
+    top1_acc = (top1_indices == labels_arr).mean() if n_ok > 0 else 0.0
+    top5_acc = np.mean([
+        int(labels_arr[i]) in top5_indices[i].tolist() for i in range(n_ok)
+    ]) if n_ok > 0 else 0.0
+    ba_top1, ba_top5 = balanced_top_k_accuracy(
+        top1_indices.tolist(), top5_indices.tolist(), all_labels, num_classes=num_classes
+    )
+
     # 4. Run manifest JSON (metadata for reproducibility)
     manifest = {
-        "model":         args.model,
-        "csv_path":      args.csv_path,
-        "video_dir":     args.video_dir,
-        "mapping_path":  args.mapping_path,
-        "output_dir":    args.output_dir,
-        "num_frames":    int(num_frames),
-        "batch_size":    args.batch_size,
-        "num_workers":   args.num_workers,
-        "dtype":         "bfloat16 (autocast)",
-        "n_total_csv":   len(df),
-        "n_evaluated":   n_ok,
-        "n_skipped":     n_fail,
-        "logits_shape":  list(logits_arr.shape),
-        "num_classes":   num_classes,
-        "elapsed_seconds": round(elapsed, 1),
-        "throughput_vid_per_s": round(n_ok / elapsed, 2) if elapsed > 0 else 0,
+        "model":                  args.model,
+        "csv_path":               args.csv_path,
+        "video_dir":              args.video_dir,
+        "mapping_path":           args.mapping_path,
+        "full_mapping_path":      args.full_mapping_path,
+        "output_dir":             args.output_dir,
+        "num_frames":             int(num_frames),
+        "batch_size":             args.batch_size,
+        "num_workers":            args.num_workers,
+        "dtype":                  "bfloat16 (autocast)",
+        "n_total_csv":            len(df),
+        "n_evaluated":            n_ok,
+        "n_skipped":              n_fail,
+        "logits_shape":           list(logits_arr.shape),
+        "num_classes":            num_classes,
+        "top1_accuracy":          round(float(top1_acc), 6),
+        "top1_balanced_accuracy": round(float(ba_top1), 6),
+        "top5_accuracy":          round(float(top5_acc), 6),
+        "top5_balanced_accuracy": round(float(ba_top5), 6),
+        "elapsed_seconds":        round(elapsed, 1),
+        "throughput_vid_per_s":   round(n_ok / elapsed, 2) if elapsed > 0 else 0,
     }
     manifest_path = os.path.join(args.output_dir, "logits_manifest.json")
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=2)
     print(f"Manifest saved: {manifest_path}")
 
-    # ---- Summary ----
-    top1_acc = (top1_indices == labels_arr).mean() if n_ok > 0 else 0.0
-    top5_acc = np.mean([
-        int(labels_arr[i]) in top5_indices[i].tolist() for i in range(n_ok)
-    ]) if n_ok > 0 else 0.0
-
     print("\n===== Inference Complete =====")
-    print(f"  Total videos in CSV  : {len(df)}")
-    print(f"  Successfully decoded : {n_ok}")
-    print(f"  Skipped (errors)     : {n_fail}")
-    print(f"  Output logits shape  : {logits_arr.shape}")
-    print(f"  Quick top-1 accuracy : {top1_acc:.4f}  (only valid if labels are correct)")
-    print(f"  Quick top-5 accuracy : {top5_acc:.4f}")
-    print(f"  Elapsed              : {elapsed:.1f}s  ({n_ok / elapsed:.2f} vid/s)")
-    print(f"\n  NPZ    → {npz_path}")
-    print(f"  Parquet→ {parquet_path}")
-    print(f"  JSON   → {manifest_path}")
+    print(f"  Total videos in CSV       : {len(df)}")
+    print(f"  Successfully decoded      : {n_ok}")
+    print(f"  Skipped (errors)          : {n_fail}")
+    print(f"  Output logits shape       : {logits_arr.shape}")
+    print(f"  Top-1 Accuracy            : {top1_acc:.4f}")
+    print(f"  Top-1 Balanced Accuracy   : {ba_top1:.4f}")
+    print(f"  Top-5 Accuracy            : {top5_acc:.4f}")
+    print(f"  Top-5 Balanced Accuracy   : {ba_top5:.4f}")
+    print(f"  Elapsed                   : {elapsed:.1f}s ({n_ok / elapsed:.2f} vid/s)")
+    print(f"\n  NPZ     → {npz_path}")
+    print(f"  Parquet → {parquet_path}")
+    print(f"  JSON    → {manifest_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -475,7 +560,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Run V-JEPA 2 inference on custom .avi videos indexed by a CSV file.\n"
-            "Saves raw logits, softmax probabilities, and metadata for all 174 SSv2 classes."
+            "Supports constraining predictions to a target class subspace (e.g. 10 classes)."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
@@ -494,8 +579,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--mapping_path",
         type=str,
+        default="data/template2id_mapping_only10classes.txt",
+        help="Path to target template-to-id mapping text file (e.g. 10 classes).",
+    )
+    parser.add_argument(
+        "--full_mapping_path",
+        type=str,
         default="data/template2id_mapping.txt",
-        help="Path to template2id_mapping.txt (tab-separated: id<TAB>template).",
+        help="Path to full 174-class template-to-id mapping text file.",
     )
     parser.add_argument(
         "--output_dir",
