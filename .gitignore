@@ -13,6 +13,8 @@
 *.mp4
 *.wandb
 *.json
+*.parquet
+*.npz
 
 experiment_ssv2_object_occlusion/stripped_down/
 
