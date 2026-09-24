@@ -7,9 +7,10 @@ For each row, the video file is located at:
     {video_dir}/{id}_{cam}.avi
   e.g. /path/to/videos/260922-134214_cam0.avi
 
-When constrained (e.g. using data/template2id_mapping_only10classes.txt):
+The full 174-class label mapping is read directly from the model's AutoConfig.
+When constrained to a target subspace (e.g. via --mapping_path):
   - Model outputs full 174 logits.
-  - Phase 2 extracts the relevant class logits corresponding to the target mapping.
+  - Relevant class logits corresponding to the target mapping are extracted.
   - Softmax probabilities and predictions are computed over the constrained class subspace.
 
 Outputs (saved to --output_dir):
@@ -25,18 +26,18 @@ The .npz format stores:
   labels      (N,)            int16    — ground-truth class IDs (-1 if template unknown)
   video_ids   (N,)            object   — recording IDs (e.g. "260922-134214")
   cams        (N,)            object   — camera views (e.g. "cam0")
+  sessions    (N,)            object   — recording sessions
   templates   (N,)            object   — SSv2 template string
   class_names (num_classes,)  object   — ordered class name strings (index = class ID)
 
 Usage:
   python scripts/vjepa_on_myvideos.py \
-      --csv_path           data/index_df.csv \
-      --video_dir          /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/raw \
-      --mapping_path       data/template2id_mapping_only10classes.txt \
-      --full_mapping_path  data/template2id_mapping.txt \
-      --output_dir         results_myvideos \
-      --batch_size         8 \
-      --num_workers        16
+      --csv_path      data/index_df.csv \
+      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/raw/ \
+      --mapping_path  data/template2id_mapping_only10classes.txt \
+      --output_dir    results/results_myvideos_2/ \
+      --batch_size    8 \
+      --num_workers   16
 
 
 """
@@ -283,40 +284,6 @@ def run_inference(args: argparse.Namespace) -> None:
         print(f"  GPU: {torch.cuda.get_device_name(device)}")
         print(f"  VRAM: {torch.cuda.get_device_properties(device).total_memory / 1e9:.1f} GB")
 
-    # ---- Load full 174 mapping ----
-    print(f"Loading full mapping from: {args.full_mapping_path}")
-    template_to_id_174, class_names_174 = load_template_mapping(args.full_mapping_path)
-    print(f"  Loaded {len(template_to_id_174)} full class templates.")
-
-    # ---- Load target mapping (e.g. 10 classes) ----
-    print(f"Loading target mapping from: {args.mapping_path}")
-    template_to_id, class_names = load_template_mapping(args.mapping_path)
-    num_classes = len(class_names)
-    print(f"  Loaded {len(template_to_id)} target templates (subspace size = {num_classes}).")
-
-    # Prepare extraction indices if target subspace is a subset of 174 classes
-    target_indices_tensor = None
-    if num_classes < len(class_names_174):
-        target_indices_in_174 = [
-            template_to_id_174[class_names[i]] for i in range(num_classes)
-        ]
-        target_indices_tensor = torch.tensor(target_indices_in_174, dtype=torch.long, device=device)
-        print(f"  Constraining model logits: 174 -> {num_classes} classes.")
-        for i, idx174 in enumerate(target_indices_in_174):
-            print(f"    Target ID {i} -> Model Logit Index {idx174}: '{class_names[i]}'")
-
-    # ---- CSV ----
-    print(f"\nLoading CSV: {args.csv_path}")
-    df = pd.read_csv(args.csv_path)
-    print(f"  Rows: {len(df)}  |  Unique IDs: {df['id'].nunique()}  |  Cams: {df['cam'].unique().tolist()}")
-
-    # Warn about unknown templates
-    unknown_templates = df["template"][~df["template"].isin(template_to_id)].unique()
-    if len(unknown_templates) > 0:
-        print(f"  WARNING: {len(unknown_templates)} template(s) not found in mapping → label will be -1.")
-        for t in unknown_templates[:5]:
-            print(f"    '{t}'")
-
     # ---- Model + processor ----
     print(f"\nLoading model: {args.model}  (local_files_only=True)")
     t_load = time.time()
@@ -330,12 +297,49 @@ def run_inference(args: argparse.Namespace) -> None:
     model.to(device)
     print(f"  Model loaded in {time.time() - t_load:.1f}s")
 
+    # Extract label mappings from pretrained model AutoConfig
+    model_id2label = {int(k): v for k, v in model.config.id2label.items()}
+    model_label2id = {v: k for k, v in model_id2label.items()}
+    print(f"  Pretrained model config has {len(model_id2label)} classes.")
+
+    # ---- Configure Target Class Subspace ----
+    if args.mapping_path:
+        print(f"\nLoading target subspace mapping: {args.mapping_path}")
+        template_to_id, class_names = load_template_mapping(args.mapping_path)
+        num_classes = len(class_names)
+        target_indices_tensor = torch.tensor(
+            [model_label2id[name] for name in class_names],
+            dtype=torch.long,
+            device=device,
+        )
+        print(f"  Constraining predictions to {num_classes} classes.")
+        for i, name in enumerate(class_names):
+            print(f"    Subspace ID {i} -> Model Head Index {model_label2id[name]}: '{name}'")
+    else:
+        template_to_id = model_label2id
+        class_names = [model_id2label[i] for i in range(len(model_id2label))]
+        num_classes = len(class_names)
+        target_indices_tensor = None
+        print(f"  Evaluating over all {num_classes} model classes.")
+
     # Honour model's native frames_per_clip if different from user flag
     model_fpc = getattr(model.config, "frames_per_clip", args.num_frames)
     if model_fpc != args.num_frames:
         print(f"  NOTE: model.config.frames_per_clip={model_fpc} differs from "
               f"--num_frames={args.num_frames}. Using model value: {model_fpc}.")
     num_frames = model_fpc
+
+    # ---- CSV ----
+    print(f"\nLoading CSV: {args.csv_path}")
+    df = pd.read_csv(args.csv_path)
+    print(f"  Rows: {len(df)}  |  Unique IDs: {df['id'].nunique()}  |  Cams: {df['cam'].unique().tolist()}")
+
+    # Warn about unknown templates
+    unknown_templates = df["template"][~df["template"].isin(template_to_id)].unique()
+    if len(unknown_templates) > 0:
+        print(f"  WARNING: {len(unknown_templates)} template(s) not found in mapping → label will be -1.")
+        for t in unknown_templates[:5]:
+            print(f"    '{t}'")
 
     # ---- Dataset / DataLoader ----
     dataset = MyVideosDataset(
@@ -514,7 +518,6 @@ def run_inference(args: argparse.Namespace) -> None:
         "csv_path":               args.csv_path,
         "video_dir":              args.video_dir,
         "mapping_path":           args.mapping_path,
-        "full_mapping_path":      args.full_mapping_path,
         "output_dir":             args.output_dir,
         "num_frames":             int(num_frames),
         "batch_size":             args.batch_size,
@@ -580,13 +583,7 @@ def parse_args() -> argparse.Namespace:
         "--mapping_path",
         type=str,
         default="data/template2id_mapping_only10classes.txt",
-        help="Path to target template-to-id mapping text file (e.g. 10 classes).",
-    )
-    parser.add_argument(
-        "--full_mapping_path",
-        type=str,
-        default="data/template2id_mapping.txt",
-        help="Path to full 174-class template-to-id mapping text file.",
+        help="Path to target template-to-id mapping text file (e.g. 10 classes). If omitted/empty, evaluates all model classes.",
     )
     parser.add_argument(
         "--output_dir",
