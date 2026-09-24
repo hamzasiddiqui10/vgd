@@ -39,6 +39,14 @@ Usage:
       --batch_size    8 \
       --num_workers   16
 
+  python scripts/vjepa_on_myvideos.py \
+      --csv_path      data/index_df.csv \
+      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/raw/ \
+      --mapping_path  "" \
+      --output_dir    results/results_myvideos_4/ \
+      --batch_size    8 \
+      --num_workers   16
+
 
 """
 
