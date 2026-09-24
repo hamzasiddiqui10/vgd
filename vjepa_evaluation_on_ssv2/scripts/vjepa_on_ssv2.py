@@ -2,9 +2,10 @@
 Evaluate V-JEPA 2 (facebook/vjepa2-vitg-fpc64-384-ssv2) on the SSv2 validation set,
 optionally constrained to a subset of classes (e.g. 10 classes).
 
-When constrained (e.g. using data/template2id_mapping_only10classes.txt):
+The full 174-class label mapping is read directly from the model's AutoConfig.
+When constrained to a target subspace (e.g. via --mapping_path):
   - Model outputs full 174 logits.
-  - Phase 2 extracts the relevant class logits corresponding to the target mapping.
+  - Relevant class logits corresponding to the target mapping are extracted.
   - Predictions and confidences are computed over the constrained class subspace.
 
 Results are written to:
@@ -16,11 +17,11 @@ Usage example:
       --csv_path data/ssv2_val_filtered.csv \
       --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
       --mapping_path data/template2id_mapping_only10classes.txt \
-      --full_mapping_path data/template2id_mapping.txt \
-      --results_dir results_ssv2_filtered \
+      --results_dir results/results_ssv2_filtered_2/ \
       --batch_size 8 \
       --num_workers 16 \
       --bfloat16
+
 
 """
 
@@ -275,40 +276,6 @@ def evaluate(args: argparse.Namespace) -> None:
         print(f"  GPU: {torch.cuda.get_device_name(device)}")
         print(f"  VRAM: {torch.cuda.get_device_properties(device).total_memory / 1e9:.1f} GB")
 
-    # ---- Load full 174 mapping ----
-    print(f"Loading full mapping from: {args.full_mapping_path}")
-    template_to_id_174, class_names_174 = load_template_mapping(args.full_mapping_path)
-    print(f"  Loaded {len(template_to_id_174)} full class templates.")
-
-    # ---- Load target mapping (e.g. 10 classes) ----
-    print(f"Loading target mapping from: {args.mapping_path}")
-    template_to_id, class_names = load_template_mapping(args.mapping_path)
-    num_classes = len(class_names)
-    print(f"  Loaded {len(template_to_id)} target class templates (subspace size = {num_classes}).")
-
-    # Prepare extraction indices if target subspace is a subset of 174 classes
-    target_indices_tensor = None
-    if num_classes < len(class_names_174):
-        target_indices_in_174 = [
-            template_to_id_174[class_names[i]] for i in range(num_classes)
-        ]
-        target_indices_tensor = torch.tensor(target_indices_in_174, dtype=torch.long, device=device)
-        print(f"  Constraining model logits: 174 -> {num_classes} classes.")
-        for i, idx174 in enumerate(target_indices_in_174):
-            print(f"    Target ID {i} -> Model Logit Index {idx174}: '{class_names[i]}'")
-
-    # ---- Load CSV ----
-    print(f"\nLoading CSV from: {args.csv_path}")
-    df = pd.read_csv(args.csv_path)
-    print(f"  Total samples: {len(df)}")
-
-    # Validate that all templates in CSV are present in target mapping
-    unknown = df["template"][~df["template"].isin(template_to_id)].unique()
-    if len(unknown) > 0:
-        print(f"  WARNING: {len(unknown)} templates not found in target mapping — will get label -1.")
-        for t in unknown[:5]:
-            print(f"    '{t}'")
-
     # ---- Load model + processor ----
     print(f"\nLoading model: {args.model} (local_files_only=True)")
     t_load = time.time()
@@ -330,6 +297,43 @@ def evaluate(args: argparse.Namespace) -> None:
     model.to(device)
     num_frames = getattr(model.config, "frames_per_clip", 64)
     print(f"  Model loaded in {time.time() - t_load:.1f}s (dtype={model_dtype}, frames_per_clip={num_frames})")
+
+    # ---- Extract label mappings from pretrained model AutoConfig ----
+    model_id2label = {int(k): v for k, v in model.config.id2label.items()}
+    model_label2id = {v: k for k, v in model_id2label.items()}
+    print(f"  Pretrained model config has {len(model_id2label)} classes.")
+
+    # ---- Configure Target Class Subspace ----
+    if args.mapping_path:
+        print(f"\nLoading target subspace mapping: {args.mapping_path}")
+        template_to_id, class_names = load_template_mapping(args.mapping_path)
+        num_classes = len(class_names)
+        target_indices = torch.tensor(
+            [model_label2id[name] for name in class_names],
+            dtype=torch.long,
+            device=device,
+        )
+        print(f"  Constrained predictions to {num_classes} classes.")
+        for i, name in enumerate(class_names):
+            print(f"    Subspace ID {i} -> Model Head Index {model_label2id[name]}: '{name}'")
+    else:
+        template_to_id = model_label2id
+        class_names = [model_id2label[i] for i in range(len(model_id2label))]
+        num_classes = len(class_names)
+        target_indices = None
+        print(f"  Evaluating over all {num_classes} model classes.")
+
+    # ---- Load CSV ----
+    print(f"\nLoading CSV from: {args.csv_path}")
+    df = pd.read_csv(args.csv_path)
+    print(f"  Total samples: {len(df)}")
+
+    # Validate templates in CSV against target mapping
+    unknown = df["template"][~df["template"].isin(template_to_id)].unique()
+    if len(unknown) > 0:
+        print(f"  WARNING: {len(unknown)} templates not found in mapping — will get label -1.")
+        for t in unknown[:5]:
+            print(f"    '{t}'")
 
     # ---- Dataset / DataLoader ----
     dataset = SSv2VideoDataset(
@@ -404,9 +408,9 @@ def evaluate(args: argparse.Namespace) -> None:
                     outputs = model(**inputs)
                     logits = outputs.logits  # (B, 174)
 
-                # Phase 2: Constrain predictions to the target class subspace
-                if target_indices_tensor is not None:
-                    logits = logits.index_select(dim=-1, index=target_indices_tensor)  # (B, num_classes)
+                # Constrain predictions to the target class subspace
+                if target_indices is not None:
+                    logits = logits.index_select(dim=-1, index=target_indices)  # (B, num_classes)
 
                 logits_f32 = logits.float().cpu()
                 probs_f32 = F.softmax(logits_f32, dim=-1)
@@ -416,7 +420,7 @@ def evaluate(args: argparse.Namespace) -> None:
             skipped += len(valid_labels)
             continue
 
-        # Collect predictions within the constrained subspace
+        # Collect predictions within the target subspace
         k = min(5, num_classes)
         topk_arr = logits_f32.topk(k, dim=-1).indices.numpy()  # (B, k)
         top1 = topk_arr[:, 0].tolist()
@@ -532,13 +536,7 @@ def parse_args() -> argparse.Namespace:
         "--mapping_path",
         type=str,
         default="data/template2id_mapping_only10classes.txt",
-        help="Path to the target template-to-id mapping text file (e.g., 10 classes).",
-    )
-    parser.add_argument(
-        "--full_mapping_path",
-        type=str,
-        default="data/template2id_mapping.txt",
-        help="Path to full 174-class template-to-id mapping text file.",
+        help="Path to target template-to-id mapping text file (e.g., 10 classes). If omitted/empty, evaluates all model classes.",
     )
     parser.add_argument(
         "--model",

@@ -1,5 +1,5 @@
 # Data
-/data/
+
 *.flo
 *.png
 *.gif
@@ -7,15 +7,15 @@
 *.mp4
 *.h5
 *.pkl
-*.csv
 *.pt
 *.webm
 *.mp4
 *.wandb
-*.json
 *.parquet
 *.npz
 
+segmasks/ssv2_videos_with_prompts_for_sam3.csv
+epic_kitchens_100_annotations/
 experiment_ssv2_object_occlusion/stripped_down/
 
 
@@ -196,5 +196,5 @@ output/
 *.out
 _work
 _vprimate
-data
 *.pdf
+data
