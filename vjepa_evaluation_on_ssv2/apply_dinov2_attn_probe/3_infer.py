@@ -5,15 +5,8 @@ python 3_infer.py \
   --split test \
   --output_dir ./results/
 
-  
-python 3_infer.py \
-  --h5_file data/extracted_features/myvideos-center-dinov2.h5 \
-  --model_path /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/experiment_ssv2_object_occlusion/stripped_down/runs/baseline_test/best.pt \
-  --split test \
-  --output_dir ./results/
 
-
-  ******
+******
 RESULT:
 Running inference (test): 100%|███████████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00, 17.36it/s]
 
