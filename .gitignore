@@ -17,7 +17,7 @@
 segmasks/ssv2_videos_with_prompts_for_sam3.csv
 epic_kitchens_100_annotations/
 experiment_ssv2_object_occlusion/stripped_down/
-vjepa_evaluation_on_ssv2/analysis_videos/
+vjepa_evaluation_on_ssv2/analysis_videos_visualized/
 
 
 # Mac OS-specific storage files

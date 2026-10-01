@@ -32,18 +32,18 @@ The .npz format stores:
 
 Usage:
   python scripts/vjepa_on_myvideos.py \
-      --csv_path      data/index_df.csv \
-      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/raw/ \
+      --csv_path      data/index_df_rec_session_2.csv \
+      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
       --mapping_path  data/template2id_mapping_only10classes.txt \
-      --output_dir    results/results_myvideos_2/ \
+      --output_dir    results/results_myvideos_10_rec_session_2/ \
       --batch_size    8 \
       --num_workers   16
 
   python scripts/vjepa_on_myvideos.py \
-      --csv_path      data/index_df.csv \
-      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/raw/ \
+      --csv_path      data/index_df_rec_session_2.csv \
+      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
       --mapping_path  "" \
-      --output_dir    results/results_myvideos_4/ \
+      --output_dir    results/results_myvideos_rec_session_2/ \
       --batch_size    8 \
       --num_workers   16
 
