@@ -18,9 +18,9 @@ by simply re-running the same command.
 
 Example (unoccluded):
     python 2_extract.py \
-        --annotations test:data/test.txt \
-        --image_dir ./data/frames/ \
-        --out data/extracted_features/myvideos-center-dinov2.h5 \
+        --annotations test:data/myvideos_2/test.txt \
+        --image_dir ./data/myvideos_2/frames/ \
+        --out data/myvideos_2/extracted_features/myvideos-center-dinov2.h5 \
         --batch_size 30 \
         --num_workers 25
 

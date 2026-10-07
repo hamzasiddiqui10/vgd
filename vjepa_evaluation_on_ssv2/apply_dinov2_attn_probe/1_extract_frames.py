@@ -1,9 +1,9 @@
 """
 
 python 1_extract_frames.py \
-  --labels_file ./data/test.txt \
-  --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/raw/ \
-  --output_dir ./data/
+  --labels_file ./data/myvideos_2/test.txt \
+  --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
+  --output_dir ./data/myvideos_2/
 
 """
 
