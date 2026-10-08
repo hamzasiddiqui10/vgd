@@ -1,0 +1,25 @@
+{
+  "model": "facebook/vjepa2-vitg-fpc64-384-ssv2",
+  "csv_path": "data/index_df_rec_session_3.csv",
+  "video_dir": "/user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/",
+  "mapping_path": "",
+  "output_dir": "results/results_myvideos_174_rec_session_3/",
+  "num_frames": 64,
+  "batch_size": 4,
+  "num_workers": 6,
+  "dtype": "bfloat16 (autocast)",
+  "n_total_csv": 99,
+  "n_evaluated": 99,
+  "n_skipped": 0,
+  "logits_shape": [
+    99,
+    174
+  ],
+  "num_classes": 174,
+  "top1_accuracy": 0.59596,
+  "top1_balanced_accuracy": 0.603704,
+  "top5_accuracy": 0.888889,
+  "top5_balanced_accuracy": 0.9,
+  "elapsed_seconds": 321.2,
+  "throughput_vid_per_s": 0.31
+}
