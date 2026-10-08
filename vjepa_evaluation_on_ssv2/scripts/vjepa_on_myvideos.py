@@ -31,6 +31,7 @@ The .npz format stores:
   class_names (num_classes,)  object   — ordered class name strings (index = class ID)
 
 Usage:
+# for 10 special classes
   python scripts/vjepa_on_myvideos.py \
       --csv_path      data/index_df_rec_session_2.csv \
       --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
@@ -39,14 +40,14 @@ Usage:
       --batch_size    8 \
       --num_workers   16
 
+# for full 174 classes
   python scripts/vjepa_on_myvideos.py \
-      --csv_path      data/index_df_rec_session_2.csv \
+      --csv_path      data/index_df_rec_session_3.csv \
       --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
       --mapping_path  "" \
-      --output_dir    results/results_myvideos_rec_session_2/ \
+      --output_dir    results/results_myvideos_174_rec_session_3/ \
       --batch_size    8 \
       --num_workers   16
-
 
 """
 
@@ -237,6 +238,7 @@ class MyVideosDataset(Dataset):
         video_id = str(row["id"])
         cam = str(row["cam"])
         template = str(row["template"])
+        placeholders = str(row["placeholders"])
         session = str(row["session"]) if "session" in row else ""
         label = self.template_to_id.get(template, -1)
 
@@ -248,6 +250,7 @@ class MyVideosDataset(Dataset):
             "cam":        cam,
             "session":    session,
             "template":   template,
+            "placeholders": placeholders,
             "label":      label,
             "frames":     frames,        # (T, H, W, C) uint8 or None if decode failed
             "video_path": str(video_path),
@@ -271,6 +274,7 @@ def collate_fn(batch: list[dict]) -> dict:
         "cams":         [item["cam"]        for item in valid],
         "sessions":     [item["session"]    for item in valid],
         "templates":    [item["template"]   for item in valid],
+        "placeholders": [item["placeholders"]   for item in valid],
         "labels":       [item["label"]      for item in valid],
         "frames_list":  [item["frames"]     for item in valid],  # list of (T, H, W, C)
         "failed_paths": failed,
@@ -372,6 +376,7 @@ def run_inference(args: argparse.Namespace) -> None:
     all_cams:      list[str]        = []
     all_sessions:  list[str]        = []
     all_templates: list[str]        = []
+    all_placeholders: list[str]     = []
     all_labels:    list[int]        = []
     all_logits:    list[np.ndarray] = []   # each: (B, num_classes) float32
     all_probs:     list[np.ndarray] = []   # each: (B, num_classes) float32
@@ -398,6 +403,7 @@ def run_inference(args: argparse.Namespace) -> None:
         cams        = batch["cams"]
         sessions    = batch["sessions"]
         templates   = batch["templates"]
+        placeholders = batch["placeholders"]
 
         # Filter out invalid labels (-1) if any
         valid_mask = [lbl >= 0 for lbl in labels]
@@ -410,6 +416,7 @@ def run_inference(args: argparse.Namespace) -> None:
         valid_cams      = [cams[i]        for i, ok in enumerate(valid_mask) if ok]
         valid_sessions  = [sessions[i]    for i, ok in enumerate(valid_mask) if ok]
         valid_templates = [templates[i]   for i, ok in enumerate(valid_mask) if ok]
+        valid_placeholders = [placeholders[i] for i, ok in enumerate(valid_mask) if ok]
 
         try:
             # AutoVideoProcessor: center-crop to 384×384 + SSv2 normalization
@@ -433,6 +440,7 @@ def run_inference(args: argparse.Namespace) -> None:
             all_video_ids.extend(valid_video_ids)
             all_cams.extend(valid_cams)
             all_sessions.extend(valid_sessions)
+            all_placeholders.extend(valid_placeholders)
             all_templates.extend(valid_templates)
             all_labels.extend(valid_labels)
 
@@ -455,6 +463,7 @@ def run_inference(args: argparse.Namespace) -> None:
     cams_arr      = np.array(all_cams,      dtype=object)                    # (N,)
     sessions_arr  = np.array(all_sessions,  dtype=object)                    # (N,)
     templates_arr = np.array(all_templates, dtype=object)                    # (N,)
+    placeholders_arr = np.array(all_placeholders, dtype=object)              # (N,)
     class_names_arr = np.array(class_names, dtype=object)                    # (num_classes,)
 
     # ---- Save outputs ----
@@ -471,6 +480,7 @@ def run_inference(args: argparse.Namespace) -> None:
         cams        = cams_arr,
         sessions    = sessions_arr,
         templates   = templates_arr,
+        placeholders = placeholders_arr,
         class_names = class_names_arr,
     )
     print(f"\nNPZ saved: {npz_path}  (shape: {logits_arr.shape})")
@@ -486,6 +496,7 @@ def run_inference(args: argparse.Namespace) -> None:
         "cam":         all_cams,
         "session":     all_sessions,
         "template":    all_templates,
+        "placeholders": all_placeholders,
         "label":       all_labels,
         "top1_pred":   top1_indices.tolist(),
         "top1_class":  [class_names[i] for i in top1_indices],
