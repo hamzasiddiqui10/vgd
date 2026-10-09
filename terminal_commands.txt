@@ -1,0 +1,95 @@
+
+----------------------------------------------------------------------------------------------------------------
+## To apply vjepa2-ssv2 giant model on some ssv2
+## vjepa_evaluation_on_ssv2/
+# Step 0 is creating the filtered csv file for the videos in data_exploration.ipynb 
+
+# for 10 special classes
+  python scripts/vjepa_on_ssv2.py \
+      --csv_path data/ssv2_val_filtered.csv \
+      --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
+      --mapping_path data/template2id_mapping_only10classes.txt \
+      --results_dir results/results_ssv2_filtered_2/ \
+      --batch_size 8 \
+      --num_workers 16 \
+      --bfloat16
+
+# for full 174 classes
+  python scripts/vjepa_on_ssv2.py \
+      --csv_path data/ssv2_val_filtered.csv \
+      --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
+      --mapping_path "" \
+      --results_dir results/results_ssv2_filtered_2/ \
+      --batch_size 8 \
+      --num_workers 16 \
+      --bfloat16
+
+----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+## To apply vjepa2-ssv2 giant model on myvideos
+## vjepa_evaluation_on_ssv2/
+
+# Step 0 is creating the right index_df csv file for the videos in data_exploration.ipynb
+
+# for 10 special classes
+  python scripts/vjepa_on_myvideos.py \
+      --csv_path      data/index_df_rec_session_2.csv \
+      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
+      --mapping_path  data/template2id_mapping_only10classes.txt \
+      --output_dir    results/results_myvideos_10_rec_session_2/ \
+      --batch_size    8 \
+      --num_workers   16
+
+# for full 174 classes
+  python scripts/vjepa_on_myvideos.py \
+      --csv_path      data/index_df_rec_session_3.csv \
+      --video_dir     /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
+      --mapping_path  "" \
+      --output_dir    results/results_myvideos_174_rec_session_3/ \
+      --batch_size    8 \
+      --num_workers   16
+
+----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+## To apply my ckpt of dinov2-attn-probe that i trained on center frames of all ssv2 videos during the experiment_ssv2_object_occlusion
+## apply_dinov2_attn_probe/  
+
+# step 0 is dataaprep notebook to make the test.txt file for the specific recording session
+
+python 1_extract_frames.py \
+  --labels_file ./data/myvideos_3/test.txt \
+  --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
+  --output_dir ./data/myvideos_3/
+
+python 2_extract.py \
+        --annotations test:data/myvideos_3/test.txt \
+        --image_dir ./data/myvideos_3/frames/ \
+        --out data/myvideos_3/extracted_features/myvideos-center-dinov2.h5 \
+        --batch_size 30 \
+        --num_workers 25
+
+python 3_infer.py \
+  --h5_file data/myvideos_3/extracted_features/myvideos-center-dinov2.h5 \
+  --model_path /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/experiment_ssv2_object_occlusion/stripped_down/runs/baseline_test/best.pt \
+  --split test \
+  --output_dir ./results/myvideos_3/
+
+----------------------------------------------------------------------------------------------------------------
