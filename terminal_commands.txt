@@ -69,7 +69,10 @@
 
 
 ----------------------------------------------------------------------------------------------------------------
-## To apply my ckpt of dinov2-attn-probe that i trained on center frames of all ssv2 videos during the experiment_ssv2_object_occlusion
+## To apply my ckpt of dinov2-attn-probe that i trained on center frames of all ssv2 videos during the experiment_ssv2_object_occlusion.
+
+Beware: There is a custom mapping of ssv2 classes here. Its an extra complication to consider for this experiment here because the model was trained using that custom mapping. It only appears in the jupyter notebook where test.txt is created.
+
 ## apply_dinov2_attn_probe/  
 
 # step 0 is dataaprep notebook to make the test.txt file for the specific recording session
@@ -91,5 +94,67 @@ python 3_infer.py \
   --model_path /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/experiment_ssv2_object_occlusion/stripped_down/runs/baseline_test/best.pt \
   --split test \
   --output_dir ./results/myvideos_3/
+
+----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+## To apply apply dinov2_16frame_attn_probe
+## apply_dinov2_16frame_attn_probe/
+
+python apply_dinov2_16frame_attn_probe.py \
+  --csv_path /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/vjepa_evaluation_on_ssv2/data/index_df.csv \
+  --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
+  --ssv2_label_mapping /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/vjepa_evaluation_on_ssv2/data/something-something-v2-id2label.json \
+  --dino_model vit_base_patch14_reg4_dinov2.lvd142m \
+  --model_path /mnt/vast-nhr/projects/nib00021/repos_jan/TrAction/checkpoints/ssv2_rebuttal_dinov2_seed42/best_acc.pt \
+  --output_dir ./results/myvideos_1/ \
+  --batch_size 12 \
+  --num_workers 16 \
+  --device cuda
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------------------------------
