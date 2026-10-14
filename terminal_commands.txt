@@ -139,17 +139,17 @@ python scripts/extract_vjepa_features.py \
   --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
   --output_dir data/output_features/ \
   --shard_prefix train_for_testing \
-  --shard_size 30000 \
-  --batch_size 8 \
-  --num_workers 4 \
+  --shard_size 10 \
+  --batch_size 4 \
+  --num_workers 2 \
   --device cuda
 
 python scripts/extract_vjepa_features.py \
-  --annotations data/test.txt \
+  --annotations data/train.txt \
   --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
   --output_dir data/output_features/ \
-  --shard_prefix test \
-  --shard_size 30000 \
+  --shard_prefix train \
+  --shard_size 21150 \
   --batch_size 128 \
   --num_workers 28 \
   --device cuda
