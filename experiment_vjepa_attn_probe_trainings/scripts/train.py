@@ -61,7 +61,6 @@ class VJepaAttentiveProbe(nn.Module):
         self.query = nn.Parameter(torch.zeros(1, 1, dim_embed))
         nn.init.trunc_normal_(self.query, std=0.02)
 
-
         # Cross-attention block
         self.norm_attn = nn.LayerNorm(dim_embed)
         self.attn = nn.MultiheadAttention(
@@ -69,7 +68,6 @@ class VJepaAttentiveProbe(nn.Module):
             num_heads=num_heads,
             batch_first=True,
         )
-
 
         # MLP block
         self.norm_mlp = nn.LayerNorm(dim_embed)
@@ -79,28 +77,20 @@ class VJepaAttentiveProbe(nn.Module):
             nn.Linear(dim_embed * 4, dim_embed),
         )
 
-
         # Classification head
         self.linear = nn.Linear(self.dim_embed, self.num_classes)
-
 
     def forward_feat(self, x):
         # x shape: [B, seq_len, dim_embed]
         B = x.shape[0]                         
-
-
         query = self.query.expand(B, -1, -1)    # [B, 1, D]
-
 
         # Cross-attention block (pre-norm)
         x = self.norm_attn(x)
         query = query + self.attn(query, x, x)[0]
 
-
         # MLP block (pre-norm)
         query = query + self.mlp(self.norm_mlp(query))
-
-
         return query.squeeze(1)                  # [B, D]
 
 
