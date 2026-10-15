@@ -1,0 +1,37 @@
+{
+    "config": {
+        "wandb_project": "ssv2-vjepa-probe",
+        "vjepa_feats_h5_dir": "./data/output_features/testing_phase/",
+        "train_h5_files": [
+            "train_shard_00_small.h5",
+            "train_shard_02_small.h5"
+        ],
+        "val_h5_files": [
+            "val_shard_00_small.h5"
+        ],
+        "epochs": 10,
+        "val_frequency": 1,
+        "lr": 0.001,
+        "weight_decay": 0.05,
+        "warmup_epochs": 5,
+        "eta_min": 5e-05,
+        "batch_size": 128,
+        "num_workers": 2,
+        "prefetch_factor": 2,
+        "pin_memory": true
+    },
+    "metrics": {
+        "main/epoch": 6,
+        "main/lr": 0.0009092830723281001,
+        "train/loss": 1.559454597924885,
+        "train/top1acc": 0.5566666722297668,
+        "train/top1balacc": 0.46613130055399943,
+        "train/top5acc": 0.8662499785423279,
+        "train/top5balacc": 0.8162372247364191,
+        "val/loss": 3.0604525804519653,
+        "val/top1acc": 0.3171428442001343,
+        "val/top1balacc": 0.23377011525745703,
+        "val/top5acc": 0.6214285492897034,
+        "val/top5balacc": 0.5219132309322183
+    }
+}

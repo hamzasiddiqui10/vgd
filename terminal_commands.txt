@@ -128,11 +128,13 @@ python apply_dinov2_16frame_attn_probe.py \
 
 
 ----------------------------------------------------------------------------------------------------------------
+# experiment_vjepa_attn_probe_trainings/
+
 # Feature Extraction Script for Something-Something V2 (SSv2) using V-JEPA 2.1
 Extracts features and stores them into sharded HDF5 files.
 model: apiantonio/vjepa2.1-vit-base-384
 
-# experiment_vjepa_attn_probe_trainings/
+
 
 python scripts/extract_vjepa_features.py \
   --annotations data/train_for_testing.txt \
@@ -154,17 +156,35 @@ python scripts/extract_vjepa_features.py \
   --num_workers 28 \
   --device cuda
 
+
+```
+u27673@ggpu115 (vbbf) $ python scripts/extract_vjepa_features.py \
+>   --annotations data/train.txt \
+>   --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
+>   --output_dir data/output_features/ \
+>   --shard_prefix train \
+>   --shard_size 21150 \
+>   --batch_size 128 \
+>   --num_workers 28 \
+>   --device cuda
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1791982618.149509 1296162 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.                              
+Loading V-JEPA 2.1 processor and model to cuda...
+Starting extraction for 168913 videos...
+Extracting train: 100%|████████████████████████████████████████████████| 168913/168913 [4:22:52<00:00, 10.71vid/s]
+Extraction complete! Shards and error logs successfully saved to data/output_features/
+u27673@ggpu115 (vbbf) $
+```
 ----------------------------------------------------------------------------------------------------------------
 
 
 
 
 
-
-
-
-
 ----------------------------------------------------------------------------------------------------------------
+# experiment_vjepa_attn_probe_trainings/
+
 
 ----------------------------------------------------------------------------------------------------------------
 

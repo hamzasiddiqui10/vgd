@@ -1,0 +1,92 @@
+_wandb:
+    value:
+        cli_version: 0.26.0
+        e:
+            j08w313rin3dp4ot9s78dg8vniz9w6mx:
+                args:
+                    - --config
+                    - configs/config_00.json
+                codePath: experiment_vjepa_attn_probe_trainings/scripts/train.py
+                codePathLocal: scripts/train.py
+                cpu_count: 64
+                cpu_count_logical: 128
+                cudaVersion: "13.0"
+                disk:
+                    /:
+                        total: "270465601536"
+                        used: "5452644352"
+                email: h.siddiqui@stud.uni-goettingen.de
+                executable: /user/h.siddiqui/u27673/.conda/envs/vbbf/bin/python
+                git:
+                    commit: 4225dbfa3c81906b2aa41a33dc9f891c732861a0
+                    remote: https://github.com/hamzasiddiqui10/vgd.git
+                gpu: NVIDIA A100-SXM4-40GB
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "42949672960"
+                      name: NVIDIA A100-SXM4-40GB
+                      uuid: GPU-efc66650-133d-c1b5-4f69-1ab5bf6c3c82
+                host: ggpu116
+                memory:
+                    total: "540931203072"
+                os: Linux-4.18.0-553.169.1.el8_10.x86_64-x86_64-with-glibc2.28
+                program: /mnt/vast-nhr/projects/nib00021/hamza/repos/vgd/experiment_vjepa_attn_probe_trainings/scripts/train.py
+                python: CPython 3.12.7
+                root: /mnt/vast-nhr/projects/nib00021/hamza/repos/vgd/experiment_vjepa_attn_probe_trainings
+                slurm:
+                    job_id: "16671393"
+                    mpi_type: pmi2
+                startedAt: "2026-10-15T09:52:18.999289Z"
+                writerId: j08w313rin3dp4ot9s78dg8vniz9w6mx
+        m: []
+        python_version: 3.12.7
+        t:
+            "1":
+                - 1
+                - 5
+                - 53
+            "2":
+                - 1
+                - 5
+                - 53
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.12.7
+            "5": 0.26.0
+            "12": 0.26.0
+            "13": linux-x86_64
+batch_size:
+    value: 128
+epochs:
+    value: 10
+eta_min:
+    value: 5e-05
+lr:
+    value: 0.001
+num_workers:
+    value: 2
+pin_memory:
+    value: true
+prefetch_factor:
+    value: 2
+train_h5_files:
+    value:
+        - train_shard_00_small.h5
+        - train_shard_02_small.h5
+val_frequency:
+    value: 1
+val_h5_files:
+    value:
+        - val_shard_00_small.h5
+vjepa_feats_h5_dir:
+    value: ./data/output_features/testing_phase/
+wandb_project:
+    value: ssv2-vjepa-probe
+warmup_epochs:
+    value: 5
+weight_decay:
+    value: 0.05
