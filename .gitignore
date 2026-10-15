@@ -20,6 +20,10 @@ experiment_ssv2_object_occlusion/stripped_down/
 vjepa_evaluation_on_ssv2/analysis_videos_visualized/
 zz_temp_dump/
 
+experiment_vjepa_attn_probe_trainings/wandb/
+experiment_vjepa_attn_probe_trainings/data/
+experiment_vjepa_attn_probe_trainings/checkpoints/
+
 # Mac OS-specific storage files
 .DS_Store
 ._.DS_Store

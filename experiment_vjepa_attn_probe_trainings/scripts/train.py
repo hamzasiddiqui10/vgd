@@ -237,7 +237,7 @@ def main(config_path):
         
     os.makedirs(run_checkpoint_dir, exist_ok=True)
 
-    print(f"Checkpoints will be saved to: {run_checkpoint_dir}")
+    print(f"[*] Checkpoints will be saved to: {run_checkpoint_dir}")
     
 
     # Initialize W&B
@@ -286,7 +286,7 @@ def main(config_path):
     total_epochs = config['epochs']
     
     warmup_scheduler = optim.lr_scheduler.LinearLR(
-        optimizer, start_factor=0.01, end_factor=1.0, total_iters=warmup_epochs
+        optimizer, start_factor=0.1, end_factor=1.0, total_iters=warmup_epochs
     )
     cosine_scheduler = optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=(total_epochs - warmup_epochs), eta_min=config['eta_min']
