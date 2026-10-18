@@ -1,0 +1,18 @@
+{
+    "wandb_project": "ssv2-vjepa-probe",
+    "vjepa_feats_h5_dir": "./data/output_features/",
+    "train_h5_files": ["train_shard_00.h5", "train_shard_01.h5", "train_shard_02.h5", "train_shard_03.h5","train_shard_04.h5", "train_shard_05.h5", "train_shard_06.h5", "train_shard_07.h5"],
+    "val_h5_files": ["val_shard_00.h5"],
+    "epochs": 7,
+    "val_frequency": 1,
+    "lr": 1e-3,
+    "weight_decay": 0.1,
+    "warmup_epochs": 2,
+    "eta_min": 5e-5,
+    "batch_size": 128,
+    "num_workers": 12,
+    "prefetch_factor": 2,
+    "pin_memory": true
+}
+
+

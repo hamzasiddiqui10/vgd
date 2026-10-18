@@ -1,0 +1,13 @@
+{
+    "loss": 1.203940113694256,
+    "top1acc": 0.6827337145805359,
+    "top1balacc": 0.6293896724521242,
+    "top5acc": 0.9264646172523499,
+    "top5balacc": 0.9074282744006161,
+    "inference_args": {
+        "vjepa_feats_h5_path": "./data/output_features/test_shard_00.h5",
+        "ckpt_path": "./checkpoints/ssv2-vjepa-probe_261016_0853/best_acc.pt",
+        "results_path": "./results/inference_results/ssv2_test_100pc_model/",
+        "save_logits_and_metadata": false
+    }
+}

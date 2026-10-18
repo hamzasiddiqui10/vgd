@@ -135,7 +135,6 @@ Extracts features and stores them into sharded HDF5 files.
 model: apiantonio/vjepa2.1-vit-base-384
 
 
-
 python scripts/extract_vjepa_features.py \
   --annotations data/train_for_testing.txt \
   --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
@@ -176,6 +175,18 @@ Extracting train: 100%|███████████████████
 Extraction complete! Shards and error logs successfully saved to data/output_features/
 u27673@ggpu115 (vbbf) $
 ```
+
+python scripts/extract_vjepa_features.py \
+  --annotations data/train.txt \
+  --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
+  --output_dir data/output_features/ \
+  --shard_prefix myvideos \
+  --shard_size 10000 \
+  --batch_size 32 \
+  --num_workers 8 \
+  --device cuda
+
+
 ----------------------------------------------------------------------------------------------------------------
 
 
@@ -187,6 +198,23 @@ u27673@ggpu115 (vbbf) $
 python scripts/train.py --config configs/config_01.json
 ----------------------------------------------------------------------------------------------------------------
 
+    
+----------------------------------------------------------------------------------------------------------------
+# experiment_vjepa_attn_probe_trainings/
+# To infer an AttentiveProbe trained ckpt on a given h5 file with h5 features.
+
+python scripts/infer.py \
+        --vjepa_feats_h5_path ./data/output_features/test_shard_00.h5 \
+        --ckpt_path ./checkpoints/ssv2-vjepa-probe_261016_1132/best_acc.pt \
+        --results_path ./results/inference_results/ssv2_test_005pc_model/ \
+        --save_logits_and_metadata False \
+        --batch_size 128 \
+        --num_workers 12
+
+----------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 
@@ -200,5 +228,32 @@ python scripts/train.py --config configs/config_01.json
 
 ----------------------------------------------------------------------------------------------------------------
 
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------
 
 
