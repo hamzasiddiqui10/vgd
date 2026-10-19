@@ -145,17 +145,6 @@ python scripts/extract_vjepa_features.py \
   --num_workers 2 \
   --device cuda
 
-python scripts/extract_vjepa_features.py \
-  --annotations data/train.txt \
-  --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
-  --output_dir data/output_features/ \
-  --shard_prefix train \
-  --shard_size 21150 \
-  --batch_size 128 \
-  --num_workers 28 \
-  --device cuda
-
-
 ```
 u27673@ggpu115 (vbbf) $ python scripts/extract_vjepa_features.py \
 >   --annotations data/train.txt \
@@ -177,10 +166,10 @@ u27673@ggpu115 (vbbf) $
 ```
 
 python scripts/extract_vjepa_features.py \
-  --annotations data/train.txt \
-  --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/public/ssv2/clips/ \
+  --annotations data/myvideos_1_2_3.txt \
+  --video_dir /user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/ \
   --output_dir data/output_features/ \
-  --shard_prefix myvideos \
+  --shard_prefix myvideos_1_2_3 \
   --shard_size 10000 \
   --batch_size 32 \
   --num_workers 8 \
@@ -204,10 +193,10 @@ python scripts/train.py --config configs/config_01.json
 # To infer an AttentiveProbe trained ckpt on a given h5 file with h5 features.
 
 python scripts/infer.py \
-        --vjepa_feats_h5_path ./data/output_features/test_shard_00.h5 \
+        --vjepa_feats_h5_path ./data/output_features/myvideos_1_2_3_shard_00.h5 \
         --ckpt_path ./checkpoints/ssv2-vjepa-probe_261016_1132/best_acc.pt \
-        --results_path ./results/inference_results/ssv2_test_005pc_model/ \
-        --save_logits_and_metadata False \
+        --results_path ./results/inference_results/myvideos_1_2_3_005pc_model/ \
+        --save_logits_and_metadata True \
         --batch_size 128 \
         --num_workers 12
 

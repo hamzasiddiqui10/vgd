@@ -1,0 +1,15 @@
+{
+    "loss": 3.17709600951082,
+    "top1acc": 0.3870967626571655,
+    "top1balacc": 0.4171023965141612,
+    "top5acc": 0.7354838848114014,
+    "top5balacc": 0.7425925925925926,
+    "inference_args": {
+        "vjepa_feats_h5_path": "./data/output_features/myvideos_1_2_3_shard_00.h5",
+        "ckpt_path": "./checkpoints/ssv2-vjepa-probe_261016_1132/best_acc.pt",
+        "results_path": "./results/inference_results/myvideos_1_2_3_005pc_model/",
+        "save_logits_and_metadata": true,
+        "batch_size": 128,
+        "num_workers": 12
+    }
+}
