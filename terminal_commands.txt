@@ -194,10 +194,10 @@ python scripts/train.py --config configs/config_01.json
 
 python scripts/infer.py \
         --vjepa_feats_h5_path ./data/output_features/myvideos_1_2_3_shard_00.h5 \
-        --ckpt_path ./checkpoints/ssv2-vjepa-probe_261016_1132/best_acc.pt \
-        --results_path ./results/inference_results/myvideos_1_2_3_005pc_model/ \
+        --ckpt_path ./checkpoints/ssv2-vjepa-probe_261016_0853/best_acc.pt \
+        --results_path ./results/inference_results/myvideos_1_2_3_100pc_model/ \
         --save_logits_and_metadata True \
-        --batch_size 128 \
+        --batch_size 32 \
         --num_workers 12
 
 ----------------------------------------------------------------------------------------------------------------
