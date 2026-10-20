@@ -1,0 +1,175 @@
+label,template,template_superset
+0,Approaching [something] with your camera,Moving the camera
+1,Attaching [something] to [something],Attaching [something] to [something]
+2,Bending [something] so that it deforms,Bending [something]
+3,Bending [something] until it breaks,Bending [something]
+4,Burying [something] in [something],Putting [something] somewhere
+5,Closing [something],Closing [something]
+6,Covering [something] with [something],Covering [something] with [something]
+7,Digging [something] out of [something],Digging [something] out of [something]
+8,Dropping [something] behind [something],Dropping [something]
+9,Dropping [something] in front of [something],Dropping [something]
+10,Dropping [something] into [something],Dropping [something]
+11,Dropping [something] next to [something],Dropping [something]
+12,Dropping [something] onto [something],Dropping [something]
+13,Failing to put [something] into [something] because [something] does not fit,Pretending to do something while touching objects
+14,Folding [something],Folding [something]
+15,Hitting [something] with [something],[Something] colliding with [something]
+16,Holding [something],Holding [something]
+17,Holding [something] behind [something],Holding [something]
+18,Holding [something] in front of [something],Holding [something]
+19,Holding [something] next to [something],Holding [something]
+20,Holding [something] over [something],Holding [something]
+21,"Laying [something] on the table on its side, not upright",Putting [something] somewhere
+22,Letting [something] roll along a flat surface,Letting [something] roll 
+23,Letting [something] roll down a slanted surface,Letting [something] roll 
+24,"Letting [something] roll up a slanted surface, so it rolls back down",Letting [something] roll 
+25,Lifting a surface with [something] on it but not enough for it to slide down,Lifting 
+26,Lifting a surface with [something] on it until it starts sliding down,Lifting 
+27,Lifting [something] up completely without letting it drop down,Lifting 
+28,"Lifting [something] up completely, then letting it drop down",Lifting 
+29,Lifting [something] with [something] on it,Lifting 
+30,Lifting up one end of [something] without letting it drop down,Lifting 
+31,"Lifting up one end of [something], then letting it drop down",Lifting 
+32,Moving away from [something] with your camera,Moving the camera
+33,Moving [part] of [something],Moving [something]
+34,Moving [something] across a surface until it falls down,Moving [something]
+35,Moving [something] across a surface without it falling down,Moving [something]
+36,Moving [something] and [something] away from each other,Moving [something] and [something]
+37,Moving [something] and [something] closer to each other,Moving [something] and [something]
+38,Moving [something] and [something] so they collide with each other,Moving [something] and [something]
+39,Moving [something] and [something] so they pass each other,Moving [something] and [something]
+40,Moving [something] away from [something],Moving [something]
+41,Moving [something] away from the camera,Moving [something]
+42,Moving [something] closer to [something],Moving [something]
+43,Moving [something] down,Moving [something]
+44,Moving [something] towards the camera,Moving [something]
+45,Moving [something] up,Moving [something]
+46,Opening [something],Opening [something]
+47,Picking [something] up,Taking [something] 
+48,Piling [something] up,Stacking things
+49,Plugging [something] into [something],Attaching [something] to [something]
+50,Plugging [something] into [something] but pulling it right out as you remove your hand,Attaching [something] to [something]
+51,Poking a hole into [some substance],Poking [something]
+52,Poking a hole into [something soft],Poking [something]
+53,Poking a stack of [something] so the stack collapses,Poking [something]
+54,Poking a stack of [something] without the stack collapsing,Poking [something]
+55,Poking [something] so it slightly moves,Poking [something]
+56,Poking [something] so lightly that it doesn't or almost doesn't move,Poking [something]
+57,Poking [something] so that it falls over,Poking [something]
+58,Poking [something] so that it spins around,Poking [something]
+59,Pouring [something] into [something],Pouring [something]
+60,Pouring [something] into [something] until it overflows,Pouring [something]
+61,Pouring [something] onto [something],Pouring [something]
+62,Pouring [something] out of [something],Pouring [something]
+63,Pretending or failing to wipe [something] off of [something],Pretending to do something without touching objects
+64,Pretending or trying and failing to twist [something],Pretending to do something while touching objects
+65,Pretending to be tearing [something that is not tearable],Pretending to do something while touching objects
+66,Pretending to close [something] without actually closing it,Pretending to do something while touching objects
+67,Pretending to open [something] without actually opening it,Pretending to do something without touching objects
+68,Pretending to pick [something] up,Pretending to do something without touching objects
+69,Pretending to poke [something],Pretending to do something without touching objects
+70,"Pretending to pour [something] out of [something], but [something] is empty",Pretending to do something while touching objects
+71,Pretending to put [something] behind [something],Pretending to do something while touching objects
+72,Pretending to put [something] into [something],Pretending to do something while touching objects
+73,Pretending to put [something] next to [something],Pretending to do something while touching objects
+74,Pretending to put [something] on a surface,Pretending to do something while touching objects
+75,Pretending to put [something] onto [something],Pretending to do something while touching objects
+76,Pretending to put [something] underneath [something],Pretending to do something while touching objects
+77,Pretending to scoop [something] up with [something],Pretending to do something while touching objects
+78,Pretending to spread air onto [something],Pretending to do something while touching objects
+79,Pretending to sprinkle air onto [something],Pretending to do something without touching objects
+80,Pretending to squeeze [something],Pretending to do something without touching objects
+81,Pretending to take [something] from [somewhere],Pretending to do something without touching objects
+82,Pretending to take [something] out of [something],Pretending to do something without touching objects
+83,Pretending to throw [something],Pretending to do something while touching objects
+84,Pretending to turn [something] upside down,Pretending to do something without touching objects
+85,Pulling [something] from behind of [something],Moving [something]
+86,Pulling [something] from left to right,Moving [something]
+87,Pulling [something] from right to left,Moving [something]
+88,Pulling [something] onto [something],Moving [something]
+89,Pulling [something] out of [something],Moving [something]
+90,Pulling two ends of [something] but nothing happens,Stretching [something]
+91,Pulling two ends of [something] so that it gets stretched,Stretching [something]
+92,Pulling two ends of [something] so that it separates into two pieces,Tearing [something]
+93,Pushing [something] from left to right,Moving [something]
+94,Pushing [something] from right to left,Moving [something]
+95,Pushing [something] off of [something],Moving [something]
+96,Pushing [something] onto [something],Moving [something]
+97,Pushing [something] so it spins,Moving [something]
+98,Pushing [something] so that it almost falls off but doesn't,Moving [something]
+99,Pushing [something] so that it falls off the table,Moving [something]
+100,Pushing [something] so that it slightly moves,Moving [something]
+101,Pushing [something] with [something],Moving [something]
+102,Putting [number of] [something] onto [something],Putting [something] somewhere
+103,Putting [something] and [something] on the table,Putting multiple things somewhere
+104,Putting [something] behind [something],Putting [something] somewhere
+105,Putting [something] in front of [something],Putting [something] somewhere
+106,Putting [something] into [something],Putting [something] somewhere
+107,Putting [something] next to [something],Putting [something] somewhere
+108,Putting [something] on a flat surface without letting it roll,Putting [something] somewhere
+109,Putting [something] on a surface,Putting [something] somewhere
+110,Putting [something] on the edge of [something] so it is not supported and falls down,Putting [something] somewhere
+111,Putting [something] onto a slanted surface but it doesn't glide down,Putting [something] somewhere
+112,Putting [something] onto [something],Putting [something] somewhere
+113,Putting [something] onto [something else that cannot support it] so it falls down,Putting [something] somewhere
+114,Putting [something similar to other things that are already on the table],Putting [something] somewhere
+115,"Putting [something] that can't roll onto a slanted surface, so it slides down",Putting [something] somewhere
+116,"Putting [something] that can't roll onto a slanted surface, so it stays where it is",Putting [something] somewhere
+117,"Putting [something that cannot actually stand upright] upright on the table, so it falls on its side",Putting [something] somewhere
+118,Putting [something] underneath [something],Putting [something] somewhere
+119,Putting [something] upright on the table,Putting [something] somewhere
+120,"Putting [something], [something] and [something] on the table",Putting multiple things somewhere
+121,"Removing [something], revealing [something] behind",Removing [something]
+122,Rolling [something] on a flat surface,Rolling [something] on a flat surface
+123,Scooping [something] up with [something],Taking [something] 
+124,Showing a photo of [something] to the camera,Showing or exhibiting [something]
+125,Showing [something] behind [something],Showing or exhibiting [something]
+126,Showing [something] next to [something],Showing or exhibiting [something]
+127,Showing [something] on top of [something],Showing or exhibiting [something]
+128,Showing [something] to the camera,Showing or exhibiting [something]
+129,Showing that [something] is empty,Showing or exhibiting [something]
+130,Showing that [something] is inside [something],Showing or exhibiting [something]
+131,[Something] being deflected from [something],[Something] colliding with [something]
+132,[Something] colliding with [something] and both are being deflected,[Something] colliding with [something]
+133,[Something] colliding with [something] and both come to a halt,[Something] colliding with [something]
+134,[Something] falling like a feather or paper,[Something] falling
+135,[Something] falling like a rock,[Something] falling
+136,Spilling [something] behind [something],Pouring [something]
+137,Spilling [something] next to [something],Pouring [something]
+138,Spilling [something] onto [something],Pouring [something]
+139,Spinning [something] so it continues spinning,Spinning [something]
+140,Spinning [something] that quickly stops spinning,Spinning [something]
+141,Spreading [something] onto [something],Spreading [something] onto [something]
+142,Sprinkling [something] onto [something],Sprinkling [something] onto [something]
+143,Squeezing [something],Holding [something]
+144,Stacking [number of] [something],Stacking things
+145,Stuffing [something] into [something],Putting [something] somewhere
+146,Taking [one of many similar things on the table],Taking [something] 
+147,Taking [something] from [somewhere],Taking [something] 
+148,Taking [something] out of [something],Taking [something] 
+149,Tearing [something] into two pieces,Tearing [something]
+150,Tearing [something] just a little bit,Tearing [something]
+151,Throwing [something],Throwing [something]
+152,Throwing [something] against [something],Throwing [something]
+153,Throwing [something] in the air and catching it,Throwing [something]
+154,Throwing [something] in the air and letting it fall,Throwing [something]
+155,Throwing [something] onto a surface,Throwing [something]
+156,Tilting [something] with [something] on it slightly so it doesn't fall down,Moving [something]
+157,Tilting [something] with [something] on it until it falls off,Moving [something]
+158,Tipping [something] over,Moving [something]
+159,"Tipping [something] with [something in it] over, so [something in it] falls out",Moving [something]
+160,Touching (without moving) [part] of [something],Touching (without moving) [part] of [something]
+161,Trying but failing to attach [something] to [something] because it doesn't stick,Attaching [something] to [something]
+162,Trying to bend [something unbendable] so nothing happens,Bending [something]
+163,"Trying to pour [something] into [something], but missing so it spills next to it",Pouring [something]
+164,Turning [something] upside down,Moving [something]
+165,Turning the camera downwards while filming [something],Moving the camera
+166,Turning the camera left while filming [something],Moving the camera
+167,Turning the camera right while filming [something],Moving the camera
+168,Turning the camera upwards while filming [something],Moving the camera
+169,Twisting (wringing) [something] wet until water comes out,Twisting [something]
+170,Twisting [something],Twisting [something]
+171,Uncovering [something],Uncovering [something]
+172,Unfolding [something],Unfolding [something]
+173,Wiping [something] off of [something],Wiping [something] 
