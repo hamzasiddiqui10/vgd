@@ -35,22 +35,22 @@ print(f"myvideos superset classes: {index_df.template_superset.nunique()}")
 
 
 vids_list_distractors = [
-    '260922-141236', # distractors_in_video | water bottle, board marker --> Putting [something] next to [something] 
-    '260922-141249', # distractors_in_video | cup --> Putting [something] on a surface 
-    '260930-122317', # distractors_in_video | plug, electrical extension --> Putting [something] next to [something] 
-    '260930-122340', # distractors_in_video | plug, water bottle --> Putting [something] next to [something] 
-    '260930-122401', # distractors_in_video | plug --> Putting [something] on a surface 
+    '260922-141308', # distractors_in_video | wallet --> Moving [something] up 
+    '260930-122254', # distractors_in_video | electrical extension, plug --> Putting [something] next to [something] 
 
-    '260930-122827', # --> distractors_in_video | plug, electrical extension --> Putting [something] onto [something] 
+    '260930-122408', # distractors_in_video | plug --> Putting [something] on a surface 
+    
+    '260930-124945', # distractors_in_video | photo of lady --> Putting [something] on a surface 
+    '260930-143505', # distractors_in_video | books --> Putting [something] on a surface 
 
-    '260930-141745', # distractors_in_video | magnet, water bottle --> Putting [something] next to [something] 
-    '260930-141829', # distractors_in_video | pen, magnet --> Putting [something] next to [something] 
-    '260930-143410', # distractors_in_video | wallet, books --> Putting [something] next to [something] 
-    '260930-143429', # distractors_in_video | books --> Putting [something] on a surface 
-    '260930-143444', # distractors_in_video | books --> Putting [something] on a surface 
+    '261008-112944', # mime_actions_control_videos | phone --> Pretending to sprinkle air onto [something] 
+    '261008-113428', # mime_actions_control_videos | wallet --> Pretending to pick [something] up 
+    '261008-113443', # mime_actions_control_videos | cup --> Pretending to pick [something] up 
+    '261008-113455', # mime_actions_control_videos | board marker --> Pretending to pick [something] up 
+    '261008-114428', # mime_actions_control_videos | tissue paper --> Bending [something] so that it deforms 
+    '261008-114453', # mime_actions_control_videos | cable --> Bending [something] so that it deforms 
+    '261008-114942', # mime_actions_control_videos | wallet, pen --> Moving [something] and [something] closer to each other 
 ]
-
-
 
 
 # Load environment variables from .env
@@ -98,8 +98,6 @@ Output strictly in JSON matching this schema:
 videos_dir = '/user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/'
 video_paths = [videos_dir + video + '_cam1.avi' for video in vids_list_distractors]
 print(video_paths)
-
-
 
 
 pbar = tqdm(video_paths, desc="Processing Videos")
