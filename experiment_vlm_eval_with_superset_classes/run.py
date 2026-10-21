@@ -35,17 +35,6 @@ print(f"myvideos superset classes: {index_df.template_superset.nunique()}")
 
 
 vids_list_distractors = [
-    '260922-141308', # distractors_in_video | wallet --> Moving [something] up 
-    '260930-122254', # distractors_in_video | electrical extension, plug --> Putting [something] next to [something] 
-
-    '260930-122408', # distractors_in_video | plug --> Putting [something] on a surface 
-    
-    '260930-124945', # distractors_in_video | photo of lady --> Putting [something] on a surface 
-    '260930-143505', # distractors_in_video | books --> Putting [something] on a surface 
-
-    '261008-112944', # mime_actions_control_videos | phone --> Pretending to sprinkle air onto [something] 
-    '261008-113428', # mime_actions_control_videos | wallet --> Pretending to pick [something] up 
-    '261008-113443', # mime_actions_control_videos | cup --> Pretending to pick [something] up 
     '261008-113455', # mime_actions_control_videos | board marker --> Pretending to pick [something] up 
     '261008-114428', # mime_actions_control_videos | tissue paper --> Bending [something] so that it deforms 
     '261008-114453', # mime_actions_control_videos | cable --> Bending [something] so that it deforms 
