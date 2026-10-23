@@ -33,7 +33,17 @@ A few examples showing how the automated object occlusion pipeline produces occl
 - **PyTorch:** Attentive probe classifier training:
 <br>
 
-Learning Curves:
+
+| Train set | Val set | Explanation |
+| --- | --- | --- |
+| No occlusion | No occlusion | Baseline |
+| Random occlusion | Occlusion | So model can learn shortcuts with object bias but cannot use them on validation set |
+| Occlusion | Random occlusion | Model does not learn shortcuts from object bias; validated on random patches to see the impact of this occlusion-based training while keeping the validation set in-distribution.|
+| Occlusion | Occlusion | Model does not learn shortcuts from object bias and is validated without them to measure true unbiased performance |
+
+<br>
+
+**Learning Curves:**
 
 ![Learning Curves - Train](README_assets/wandb_center_frame_attn_probe_trainset.png)
 <br>
