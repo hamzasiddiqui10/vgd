@@ -19,7 +19,7 @@ print(ssv2_action_class_superset.shape)
 
 ## index_df
 index_df = pd.read_csv('/user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/index.csv')
-
+index_df = index_df[~index_df['session'].str.startswith('vqa')].reset_index(drop=True)
 
 index_df['cam'] = 'cam1'
 index_df = index_df.rename(columns={'id':'video_id'})
@@ -35,10 +35,18 @@ print(f"myvideos superset classes: {index_df.template_superset.nunique()}")
 
 
 vids_list_distractors = [
-    '261008-113455', # mime_actions_control_videos | board marker --> Pretending to pick [something] up 
-    '261008-114428', # mime_actions_control_videos | tissue paper --> Bending [something] so that it deforms 
-    '261008-114453', # mime_actions_control_videos | cable --> Bending [something] so that it deforms 
-    '261008-114942', # mime_actions_control_videos | wallet, pen --> Moving [something] and [something] closer to each other 
+    '261027-125414', # distractors_are_endproducts | plug-inside-electrical-extension --> Putting [something] on a surface 
+    '261027-125434', # distractors_are_endproducts | plug-inside-electrical-extension, wallet --> Putting [something] next to [something] 
+    '261027-125510', # distractors_are_endproducts | board marker, plug-inside-electrical-extension --> Pushing [something] with [something] 
+    '261027-125541', # distractors_are_endproducts | cable-inside-phone --> Putting [something] on a surface 
+    '261027-125551', # distractors_are_endproducts | cable-inside-phone, board marker --> Putting [something] next to [something] 
+    '261027-125622', # distractors_are_endproducts | cup, cable-inside-phone --> Pushing [something] with [something] 
+    '261027-130210', # distractors_are_endproducts | two-torn-pieces-of-paper --> Putting [something] on a surface 
+    '261027-130232', # distractors_are_endproducts | two-torn-pieces-of-paper, phone --> Putting [something] next to [something] 
+    '261027-130312', # distractors_are_endproducts | two-torn-pieces-of-paper, books --> Pushing [something] with [something] 
+    '261027-130336', # distractors_are_endproducts | bent-wire --> Putting [something] on a surface 
+    '261027-130357', # distractors_are_endproducts | bent-wire, plate --> Putting [something] next to [something] 
+    '261027-130424', # distractors_are_endproducts | bent-wire, phone --> Pushing [something] with [something]
 ]
 
 
