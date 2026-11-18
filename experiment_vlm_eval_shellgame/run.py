@@ -63,7 +63,7 @@ client = OpenAI(
 
 
 
-videos_dir = '/user/h.siddiqui/u27673/.project/dir.project/hamza/repos/vgd/data/hamza_vgd_data/capture/raw/'
+videos_dir = 'data/compressed_videos/'  # Directory containing the compressed videos
 
 
 
@@ -111,7 +111,7 @@ pbar = tqdm(vids_list[1:], desc="Processing Videos")
 
 for video_name in pbar:
     # Make file path and load video in base64 format
-    video_file_path = videos_dir + video_name + '_cam0.avi'
+    video_file_path = videos_dir + video_name + '_cam0.mp4'
     with open(video_file_path, "rb") as f:
         b64_video = base64.b64encode(f.read()).decode("utf-8")
 
@@ -130,7 +130,7 @@ for video_name in pbar:
                     {"type": "text", "text": user_prompt},
                     {
                         "type": "video_url",
-                        "video_url": {"url": f"data:video/avi;base64,{b64_video}"},
+                        "video_url": {"url": f"data:video/mp4;base64,{b64_video}"},
                     },
                 ],
             },
