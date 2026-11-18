@@ -5,6 +5,7 @@ import json
 import time
 from dotenv import load_dotenv
 from openai import OpenAI
+import openai
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -93,7 +94,7 @@ Instructions:
 Output strictly in JSON matching this schema:|
 {{
   "initial_position": "<A, B, or C>",
-  "swap_sequence": "A -> C -> A -> B",  # Example format showing the chronological sequence of cup positions
+  "swap_sequence": "A -> C -> A -> B", 
   "predicted_position": "<A, B, or C>",
   "confidence": 0.0
 }}
@@ -107,62 +108,93 @@ print(user_prompt)
 
 
 
-pbar = tqdm(vids_list[1:], desc="Processing Videos")
+results_path = "data/vlm_eval_results/shellgame_predictions.jsonl"
+
+
+
+
+
+# 1. Load already-completed video names so you never lose progress
+completed_videos = set()
+if os.path.exists(results_path):
+    with open(results_path, "r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                completed_videos.add(json.loads(line)["video_file"])
+
+print(f"[*] Found {len(completed_videos)} completed videos. Resuming from last checkpoint.")
+print(f"[*] -- Completed Videos: {completed_videos}")
+
+
+
+pbar = tqdm(vids_list[2:], desc="Processing Videos")
 
 for video_name in pbar:
-    # Make file path and load video in base64 format
-    video_file_path = videos_dir + video_name + '_cam0.mp4'
+    # Make file path and check against completed checkpoint
+    video_file_path = os.path.join(videos_dir, f"{video_name}_cam0.mp4")
+    video_file_basename = os.path.basename(video_file_path)
+
+    if video_file_basename in completed_videos:
+        continue
+
     with open(video_file_path, "rb") as f:
         b64_video = base64.b64encode(f.read()).decode("utf-8")
 
-    # system_prompts and user_prompt exactly same for all videos.
-    
-    # API call
-    start_time = time.time()
+    # 2. Retry up to 3 times with backoff on 504 / timeout errors
+    for attempt in range(3):
+        try:
+            start_time = time.time()
 
-    response = client.chat.completions.create(
-        model="glm-5.3-flash",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": user_prompt},
+            response = client.chat.completions.create(
+                model="glm-5.3-flash",
+                messages=[
+                    {"role": "system", "content": system_prompt},
                     {
-                        "type": "video_url",
-                        "video_url": {"url": f"data:video/mp4;base64,{b64_video}"},
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": user_prompt},
+                            {
+                                "type": "video_url",
+                                "video_url": {"url": f"data:video/mp4;base64,{b64_video}"},
+                            },
+                        ],
                     },
                 ],
-            },
-        ],
-        response_format={"type": "json_object"},
-        temperature=0.1,
-    )
+                response_format={"type": "json_object"},
+                temperature=0.1,
+                timeout=180.0,
+            )
 
-    elapsed_time = round(time.time() - start_time, 2)
+            elapsed_time = round(time.time() - start_time, 2)
 
-    # Extract JSON prediction content
-    prediction_json = json.loads(response.choices[0].message.content)
+            # Extract JSON prediction content
+            prediction_json = json.loads(response.choices[0].message.content)
 
-    # Extract token & performance metadata
-    usage = response.usage
+            # Extract token & performance metadata
+            usage = response.usage
 
-    # 3. Update the dictionary to log both video file names
-    run_result = {
-        "video_file": os.path.basename(video_file_path),
-        "model": response.model,
-        "elapsed_seconds": elapsed_time,
-        "prompt_tokens": usage.prompt_tokens if usage else None,
-        "completion_tokens": usage.completion_tokens if usage else None,
-        "total_tokens": usage.total_tokens if usage else None,
-        "initial_position": prediction_json.get("initial_position"),
-        "predicted_position": prediction_json.get("predicted_position"),
-        "confidence": float(prediction_json.get("confidence", 0.0)),
-        "swap_sequence": prediction_json.get("swap_sequence"),
-    }
+            run_result = {
+                "video_file": video_file_basename,
+                "model": response.model,
+                "elapsed_seconds": elapsed_time,
+                "prompt_tokens": usage.prompt_tokens if usage else None,
+                "completion_tokens": usage.completion_tokens if usage else None,
+                "total_tokens": usage.total_tokens if usage else None,
+                "initial_position": prediction_json.get("initial_position"),
+                "predicted_position": prediction_json.get("predicted_position"),
+                "confidence": float(prediction_json.get("confidence", 0.0)),
+                "swap_sequence": prediction_json.get("swap_sequence"),
+            }
 
-    # Append result as a single JSON line
-    with open('data/vlm_eval_results/action_predictions_shellgame.jsonl', "a", encoding="utf-8") as f:
-        f.write(json.dumps(run_result) + "\n")
+            # Append result as a single JSON line
+            with open(results_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(run_result) + "\n")
 
- 
+            completed_videos.add(video_file_basename)
+            break  # Success, move to next video
+
+        except (openai.InternalServerError, openai.APITimeoutError, openai.RateLimitError, json.JSONDecodeError) as e:
+            print(f"\n[Attempt {attempt + 1}/3] {video_file_basename} failed ({e}). Retrying in 10s...")
+            time.sleep(10)
+    else:
+        print(f"\nSkipping {video_file_basename} after 3 failed attempts.")
