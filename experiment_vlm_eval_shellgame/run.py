@@ -12,41 +12,8 @@ from tqdm import tqdm
 
 
 
-vids_list = [
-    '261117-155127', # --> C     -- shellgame-medium 
-    '261117-155207', # --> B     -- shellgame-medium 
-    '261117-155252', # --> A     -- shellgame-medium 
-    '261117-155426', # --> C     -- shellgame-medium 
-    '261117-155503', # --> C     -- shellgame-medium 
-    '261117-155543', # --> B     -- shellgame-fast 
-    '261117-155621', # --> C     -- shellgame-fast 
-    '261117-155722', # --> B     -- shellgame-fast 
-    '261117-160815', # --> A     -- shellgame-fast 
-    '261117-160858', # --> A     -- shellgame-fast 
-    '261117-160936', # --> B     -- shellgame-fast 
-    '261117-161017', # --> C     -- shellgame-fast 
-    '261117-161053', # --> B     -- shellgame-fast 
-    '261117-161121', # --> C     -- shellgame-fast 
-    '261117-161150', # --> C     -- shellgame-fast 
-    '261117-161257', # --> B     -- shellgame-medium 
-    '261117-161345', # --> A     -- shellgame-medium 
-    '261117-161420', # --> A     -- shellgame-medium 
-    '261117-161455', # --> B     -- shellgame-medium 
-    '261117-161544', # --> A     -- shellgame-medium 
-    '261117-161811', # --> C     -- shellgame-slow 
-    '261117-161859', # --> A     -- shellgame-slow 
-    '261117-161936', # --> A     -- shellgame-slow 
-    '261117-162009', # --> C     -- shellgame-slow 
-    '261117-162259', # --> A     -- shellgame-slow 
-    '261117-162319', # --> C     -- shellgame-slow 
-    '261117-162343', # --> B     -- shellgame-slow 
-    '261117-162402', # --> B     -- shellgame-slow 
-    '261117-162434', # --> A     -- shellgame-slow 
-    '261117-162457', # --> A     -- shellgame-slow 
-    '261117-162515', # --> B     -- shellgame-slow 
-    '261117-162538', # --> C     -- shellgame-slow 
+vids_list = ['261117-155543', '261117-160858', '261117-161121']
 
-]
 print(len(vids_list))
 
 
@@ -127,7 +94,7 @@ print(f"[*] -- Completed Videos: {completed_videos}")
 
 
 
-pbar = tqdm(vids_list[2:], desc="Processing Videos")
+pbar = tqdm(vids_list, desc="Processing Videos")
 
 for video_name in pbar:
     # Make file path and check against completed checkpoint
