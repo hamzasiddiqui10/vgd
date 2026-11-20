@@ -13,8 +13,8 @@ from tqdm import tqdm
 
 
 vids_list = [
-    '261117-155127', # --> C     -- shellgame-medium 
-    '261117-155207', # --> B     -- shellgame-medium 
+    # '261117-155127', # --> C     -- shellgame-medium 
+    # '261117-155207', # --> B     -- shellgame-medium 
     '261117-155252', # --> A     -- shellgame-medium 
     '261117-155426', # --> C     -- shellgame-medium 
     '261117-155503', # --> C     -- shellgame-medium 
@@ -96,7 +96,7 @@ print(user_prompt)
 
 
 videos_dir = 'data/compressed_videos/'
-results_path = "data/vlm_eval_results/shellgame_predictions_gemini-3.8-flash.jsonl"
+results_path = "data/vlm_eval_results/shellgame_predictions_gemini-3.8-flash-agentic.jsonl"
 
 pbar = tqdm(vids_list, desc="Processing Videos")
 
@@ -108,65 +108,71 @@ for video_name in pbar:
 
     # system_prompts and user_prompt exactly same for all videos.
     
-    # API call
-    start_time = time.time()
+    try:
+        # API call
+        start_time = time.time()
 
-    response = client.chat.completions.create(
-        model="google/gemini-3.8-flash",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": user_prompt,
-                    },
-                    {
-                        "type": "video_url",
-                        "video_url": {
-                            "url": f"data:video/mp4;base64,{b64_video}",
-                            },
-                    },
-                ],
+        response = client.chat.completions.create(
+            model="google/gemini-3.8-flash",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": user_prompt,
+                        },
+                        {
+                            "type": "video_url",
+                            "video_url": {
+                                "url": f"data:video/mp4;base64,{b64_video}",
+                                "processing": "agentic",
+                                },
+                        },
+                    ],
+                },
+            ],
+            extra_body={
+                # "provider": {
+                #     "order": ["Google AI Studio"],  
+                #     "allow_fallbacks": False,
+                # },
+                "reasoning": {"effort": "medium"},
             },
-        ],
-        extra_body={
-            "provider": {
-                "order": ["Google AI Studio"],  
-                "allow_fallbacks": False,
-            },
-            "reasoning": {"effort": "medium"},
-        },
-        response_format={"type": "json_object"},
-        temperature=0.1,
-        # timeout=180,
-    )
+            response_format={"type": "json_object"},
+            temperature=0.1,
+            # timeout=180,
+        )
 
-    elapsed_time = round(time.time() - start_time, 2)
+        elapsed_time = round(time.time() - start_time, 2)
 
-    # Extract JSON prediction content
-    prediction_json = json.loads(response.choices[0].message.content)
+        # Extract JSON prediction content
+        prediction_json = json.loads(response.choices[0].message.content)
 
-    # Extract token & performance metadata
-    usage = response.usage
+        # Extract token & performance metadata
+        usage = response.usage
 
-    # 3. Update the dictionary to log both video file names
-    run_result = {
-        "video_file": os.path.basename(video_file_path),
-        "model": response.model,
-        "elapsed_seconds": elapsed_time,
-        "prompt_tokens": usage.prompt_tokens if usage else None,
-        "completion_tokens": usage.completion_tokens if usage else None,
-        "total_tokens": usage.total_tokens if usage else None,
-        "cost": usage.cost if usage else None,
-        "initial_position": prediction_json.get("initial_position"),
-        "predicted_position": prediction_json.get("predicted_position"),
-        "confidence": float(prediction_json.get("confidence", 0.0)),
-        "swap_sequence": prediction_json.get("swap_sequence"),
-    }
+        # 3. Update the dictionary to log both video file names
+        run_result = {
+            "video_file": os.path.basename(video_file_path),
+            "model": response.model,
+            "elapsed_seconds": elapsed_time,
+            "prompt_tokens": usage.prompt_tokens if usage else None,
+            "completion_tokens": usage.completion_tokens if usage else None,
+            "total_tokens": usage.total_tokens if usage else None,
+            "cost": usage.cost if usage else None,
+            "initial_position": prediction_json.get("initial_position"),
+            "predicted_position": prediction_json.get("predicted_position"),
+            "confidence": float(prediction_json.get("confidence", 0.0)),
+            "swap_sequence": prediction_json.get("swap_sequence"),
+        }
 
-    # Append result as a single JSON line
-    with open(results_path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(run_result) + "\n")
+        # Append result as a single JSON line
+        with open(results_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(run_result) + "\n")
+
+    except Exception as e:
+        print(f"[!] Error processing video {video_name}: {e}")
+        continue
 
