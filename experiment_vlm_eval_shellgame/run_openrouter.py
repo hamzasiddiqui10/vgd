@@ -13,13 +13,41 @@ from tqdm import tqdm
 
 
 vids_list = [
-'261117-155543',
- '261117-155621',
- '261117-160815',
- '261117-160858',
- '261117-161017',
- '261117-161150',
+    '261117-155127', # --> C     -- shellgame-medium 
+    '261117-155207', # --> B     -- shellgame-medium 
+    '261117-155252', # --> A     -- shellgame-medium 
+    '261117-155426', # --> C     -- shellgame-medium 
+    '261117-155503', # --> C     -- shellgame-medium 
+    '261117-155543', # --> B     -- shellgame-fast 
+    '261117-155621', # --> C     -- shellgame-fast 
+    '261117-155722', # --> B     -- shellgame-fast 
+    '261117-160815', # --> A     -- shellgame-fast 
+    '261117-160858', # --> A     -- shellgame-fast 
+    '261117-160936', # --> B     -- shellgame-fast 
+    '261117-161017', # --> C     -- shellgame-fast 
+    '261117-161053', # --> B     -- shellgame-fast 
+    '261117-161121', # --> C     -- shellgame-fast 
+    '261117-161150', # --> C     -- shellgame-fast 
+    '261117-161257', # --> B     -- shellgame-medium 
+    '261117-161345', # --> A     -- shellgame-medium 
+    '261117-161420', # --> A     -- shellgame-medium 
+    '261117-161455', # --> B     -- shellgame-medium 
+    '261117-161544', # --> A     -- shellgame-medium 
+    '261117-161811', # --> C     -- shellgame-slow 
+    '261117-161859', # --> A     -- shellgame-slow 
+    '261117-161936', # --> A     -- shellgame-slow 
+    '261117-162009', # --> C     -- shellgame-slow 
+    '261117-162259', # --> A     -- shellgame-slow 
+    '261117-162319', # --> C     -- shellgame-slow 
+    '261117-162343', # --> B     -- shellgame-slow 
+    '261117-162402', # --> B     -- shellgame-slow 
+    '261117-162434', # --> A     -- shellgame-slow 
+    '261117-162457', # --> A     -- shellgame-slow 
+    '261117-162515', # --> B     -- shellgame-slow 
+    '261117-162538', # --> C     -- shellgame-slow 
+
 ]
+
 print(len(vids_list))
 
 
@@ -52,13 +80,15 @@ Instructions:
 2. Track the cup with the puck chronologically through every move or swap from start to finish, noting how the target cup's position changes at each step.
 3. State your final predicted position ("A", "B", or "C") where the puck is located at the end of the video.
 4. Provide a confidence score as a float between 0.0 and 1.0 denoting your certainty in the final predicted position (where 1.0 is completely certain and 0.33 is random guessing).
+5. State the exact number of frames you sampled and processed from the given video in integer format.
 
 Output strictly in JSON matching this schema:|
 {{
   "initial_position": "<A, B, or C>",
-  "swap_sequence": "A -> C -> A -> B", 
+  "swap_sequence": "A -> C -> A -> B",
   "predicted_position": "<A, B, or C>",
-  "confidence": 0.0
+  "confidence": 0.0,
+  "frames_seen": 60
 }}
 """
 
@@ -93,16 +123,17 @@ for video_name in pbar:
                         "role": "user",
                         "content": [
                             {
+                            "type": "video_url",
+                            "video_url": {
+                                "url": f"data:video/mp4;base64,{b64_video}",
+                                "processing": "agentic",
+                                },
+                            },
+                            {
                                 "type": "text",
                                 "text": user_prompt,
                             },
-                            {
-                                "type": "video_url",
-                                "video_url": {
-                                    "url": f"data:video/mp4;base64,{b64_video}",
-                                    "processing": "agentic",
-                                    },
-                            },
+                            
                         ],
                     },
                 ],
@@ -139,6 +170,7 @@ for video_name in pbar:
                 "predicted_position": prediction_json.get("predicted_position"),
                 "confidence": float(prediction_json.get("confidence", 0.0)),
                 "swap_sequence": prediction_json.get("swap_sequence"),
+                "frames_seen": prediction_json.get("frames_seen"),
             }
 
             # Append result as a single JSON line
