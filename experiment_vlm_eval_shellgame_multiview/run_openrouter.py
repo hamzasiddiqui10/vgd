@@ -13,41 +13,48 @@ from tqdm import tqdm
 
 
 vids_list = [
-    '261117-155127', # --> C     -- shellgame-medium 
-    '261117-155207', # --> B     -- shellgame-medium 
-    '261117-155252', # --> A     -- shellgame-medium 
-    '261117-155426', # --> C     -- shellgame-medium 
-    '261117-155503', # --> C     -- shellgame-medium 
-    '261117-155543', # --> B     -- shellgame-fast 
-    '261117-155621', # --> C     -- shellgame-fast 
-    '261117-155722', # --> B     -- shellgame-fast 
-    '261117-160815', # --> A     -- shellgame-fast 
-    '261117-160858', # --> A     -- shellgame-fast 
-    '261117-160936', # --> B     -- shellgame-fast 
-    '261117-161017', # --> C     -- shellgame-fast 
-    '261117-161053', # --> B     -- shellgame-fast 
-    '261117-161121', # --> C     -- shellgame-fast 
-    '261117-161150', # --> C     -- shellgame-fast 
-    '261117-161257', # --> B     -- shellgame-medium 
-    '261117-161345', # --> A     -- shellgame-medium 
-    '261117-161420', # --> A     -- shellgame-medium 
-    '261117-161455', # --> B     -- shellgame-medium 
-    '261117-161544', # --> A     -- shellgame-medium 
-    '261117-161811', # --> C     -- shellgame-slow 
-    '261117-161859', # --> A     -- shellgame-slow 
-    '261117-161936', # --> A     -- shellgame-slow 
-    '261117-162009', # --> C     -- shellgame-slow 
-    '261117-162259', # --> A     -- shellgame-slow 
-    '261117-162319', # --> C     -- shellgame-slow 
-    '261117-162343', # --> B     -- shellgame-slow 
-    '261117-162402', # --> B     -- shellgame-slow 
-    '261117-162434', # --> A     -- shellgame-slow 
-    '261117-162457', # --> A     -- shellgame-slow 
-    '261117-162515', # --> B     -- shellgame-slow 
-    '261117-162538', # --> C     -- shellgame-slow 
-
+    '261125-104457', # --> C     -- shellgame_mv_a 
+    '261125-104554', # --> B     -- shellgame_mv_a 
+    '261125-104705', # --> C     -- shellgame_mv_a 
+    '261125-104732', # --> A     -- shellgame_mv_a 
+    '261125-104759', # --> A     -- shellgame_mv_a 
+    '261125-104837', # --> C     -- shellgame_mv_a 
+    '261125-104917', # --> A     -- shellgame_mv_a 
+    '261125-104952', # --> A     -- shellgame_mv_a 
+    '261125-105943', # --> C     -- shellgame_mv_a 
+    '261125-110012', # --> C     -- shellgame_mv_a 
+    '261125-110038', # --> A     -- shellgame_mv_a 
+    '261125-110106', # --> A     -- shellgame_mv_a 
+    '261125-110135', # --> C     -- shellgame_mv_a 
+    '261125-110711', # --> A     -- shellgame_mv_a 
+    '261125-110736', # --> C     -- shellgame_mv_a 
+    '261125-110758', # --> C     -- shellgame_mv_a 
+    '261125-110830', # --> A     -- shellgame_mv_a 
+    '261125-110901', # --> B     -- shellgame_mv_a 
+    '261125-111934', # --> A     -- shellgame_mv_b 
+    '261125-112001', # --> C     -- shellgame_mv_b 
+    '261125-112026', # --> A     -- shellgame_mv_b 
+    '261125-112050', # --> B     -- shellgame_mv_b 
+    '261125-112116', # --> C     -- shellgame_mv_b 
+    '261125-112139', # --> A     -- shellgame_mv_b 
+    '261125-112205', # --> B     -- shellgame_mv_b 
+    '261125-112306', # --> C     -- shellgame_mv_b 
+    '261125-112333', # --> A     -- shellgame_mv_b 
+    '261125-112521', # --> C     -- shellgame_mv_b 
+    '261125-112540', # --> C     -- shellgame_mv_b 
+    '261125-114107', # --> C     -- shellgame_mv_c 
+    '261125-114146', # --> A     -- shellgame_mv_c 
+    '261125-114209', # --> C     -- shellgame_mv_c 
+    '261125-114232', # --> B     -- shellgame_mv_c 
+    '261125-114306', # --> C     -- shellgame_mv_c 
+    '261125-114327', # --> B     -- shellgame_mv_c 
+    '261125-114354', # --> C     -- shellgame_mv_c 
+    '261125-114427', # --> A     -- shellgame_mv_c 
+    '261125-114451', # --> A     -- shellgame_mv_c 
+    '261125-114516', # --> C     -- shellgame_mv_c 
+    '261125-114540', # --> B     -- shellgame_mv_c 
+    '261125-114606', # --> A     -- shellgame_mv_c 
 ]
-
 print(len(vids_list))
 
 
@@ -61,35 +68,41 @@ client = OpenAI(
 
 
 
-
-
 system_prompt = (
-    "You are an expert visual object-tracking and spatial-temporal reasoning model. "
-    "You are provided with a single bird's-eye view video of a table with three clearly marked positions: A, B, and C, each having an inverted cup. "
-    "At the beginning of the video, a puck is revealed under one of the cups, after which the cups are shuffled. "
-    "Track the target cup continuously across all movements to determine its final position."
+    "You are an expert multi-view visual object-tracking and spatial-temporal reasoning model. "
+    "You are provided with a single synchronized split-screen video showing two side-by-side camera views of the exact same event: "
+    "the LEFT half is 'cam0' and the RIGHT half is 'cam1'. "
+    "In 'cam1', there are three clearly marked positions: A, B, and C, each starting with an inverted cup. "
+    "At the start of the video, a puck is revealed under one of the cups in 'cam1'. "
+    "The cups are then moved out of 'cam1' into 'cam0', shuffled inside 'cam0', and finally returned to 'cam1' onto markers A, B, and C. "
+    "You must synthesize spatial and temporal cues across both camera views to continuously maintain the identity of the target cup across camera boundaries and determine its final resting position."
 )
 
-user_prompt = f"""
-Analyze this bird's-eye view video of a shell game and determine which position (A, B, or C) currently hides the puck at the end of the video.
+user_prompt = """
+Analyze this synchronized split-screen video ('cam0' on the left, 'cam1' on the right) of a multi-view shell game and determine which position (A, B, or C) in 'cam1' hides the puck at the end of the video.
 
-Valid Positions: {{"A", "B", "C"}}
+Valid Positions: {"A", "B", "C"}
 
 Instructions:
-1. Identify the starting position (A, B, or C) where the puck is initially revealed under a cup at the start of the video.
-2. Track the cup with the puck chronologically through every move or swap from start to finish, noting how the target cup's position changes at each step.
+1. Initial Reveal ('cam1' - Right): Identify the starting position (A, B, or C) where the puck is initially revealed under a cup at the beginning of the recording.
+2. Track the cup with the puck chronologically:
+  - Outbound Transition ('cam1' -> 'cam0'): Track the target cup as it leaves 'cam1' and enters 'cam0', noting its relative spatial order (e.g., left, middle, right) upon entering 'cam0'. 
+  - Shuffle Tracking ('cam0' - Left): Continuously track the physical target cup through every swap and movement inside 'cam0'. 
+  - Return Transition ('cam0' -> 'cam1'): Track the target cup as it exits 'cam0', re-enters 'cam1', and is placed onto one of the final markers (A, B, or C).
 3. State your final predicted position ("A", "B", or "C") where the puck is located at the end of the video.
 4. Provide a confidence score as a float between 0.0 and 1.0 denoting your certainty in the final predicted position (where 1.0 is completely certain and 0.33 is random guessing).
 5. State the exact number of frames you sampled and processed from the given video in integer format.
+6. Spatial Camera Setup Inference: Provide a single, concise sentence describing your best inference of the physical camera setup and the spatial position/orientation of 'cam0' relative to 'cam1' (e.g., adjacent adjacent top-down views, angled side-by-side cameras, or opposite-facing perspectives) based on how the cups and hands exit one frame and enter the other.
 
-Output strictly in JSON matching this schema:|
-{{
+Output strictly in JSON matching this schema:
+{
   "initial_position": "<A, B, or C>",
-  "swap_sequence": "A -> C -> A -> B",
+  "swap_sequence": "cam1:A -> enter_cam0:left -> cam0_swap:right -> return_cam1:B",
   "predicted_position": "<A, B, or C>",
   "confidence": 0.0,
-  "frames_seen": 60
-}}
+  "frames_seen": 60,
+  "camera_setup_reasoning": "<One sentence describing the inferred physical position and orientation of cam0 relative to cam1>"
+}
 """
 
 print(system_prompt)
@@ -98,14 +111,14 @@ print(user_prompt)
 
 
 
-videos_dir = 'data/compressed_videos/'
+videos_dir = 'data/combined_videos/'
 results_path = "data/vlm_eval_results/shellgame_predictions_gemini-3.8-flash-agentic.jsonl"
 
-pbar = tqdm(vids_list, desc="Processing Videos")
+pbar = tqdm(vids_list[1:], desc="Processing Videos")
 
 for video_name in pbar:
     # Make file path and load video in base64 format
-    video_file_path = videos_dir + video_name + '_cam0.mp4'
+    video_file_path = videos_dir + video_name + '_combined.mp4'
     with open(video_file_path, "rb") as f:
         b64_video = base64.b64encode(f.read()).decode("utf-8")
 
@@ -123,30 +136,25 @@ for video_name in pbar:
                         "role": "user",
                         "content": [
                             {
-                            "type": "video_url",
-                            "video_url": {
-                                "url": f"data:video/mp4;base64,{b64_video}",
-                                "processing": "agentic",
-                                },
+                                "type": "video_url",
+                                "video_url": {
+                                    "url": f"data:video/mp4;base64,{b64_video}",
+                                    "processing": "agentic",
+                                    },
                             },
                             {
                                 "type": "text",
                                 "text": user_prompt,
                             },
-                            
+
                         ],
                     },
                 ],
                 extra_body={
-                    # "provider": {
-                    #     "order": ["Google AI Studio"],  
-                    #     "allow_fallbacks": False,
-                    # },
                     "reasoning": {"effort": "medium"},
                 },
                 response_format={"type": "json_object"},
                 temperature=0.1,
-                # timeout=180,
             )
 
             elapsed_time = round(time.time() - start_time, 2)
@@ -171,6 +179,7 @@ for video_name in pbar:
                 "confidence": float(prediction_json.get("confidence", 0.0)),
                 "swap_sequence": prediction_json.get("swap_sequence"),
                 "frames_seen": prediction_json.get("frames_seen"),
+                "camera_setup_reasoning": prediction_json.get("camera_setup_reasoning"),
             }
 
             # Append result as a single JSON line

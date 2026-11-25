@@ -55,9 +55,8 @@ vids_list = [
     '261125-114540', # --> B     -- shellgame_mv_c 
     '261125-114606', # --> A     -- shellgame_mv_c 
 ]
+
 print(len(vids_list))
-
-
 
 
 def concatenate_videos_side_by_side(video_path_0, video_path_1, output_path):
