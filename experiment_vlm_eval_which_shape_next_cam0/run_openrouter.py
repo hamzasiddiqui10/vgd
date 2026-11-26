@@ -13,47 +13,22 @@ from tqdm import tqdm
 
 
 vids_list = [
-    '261125-104457', # --> C     -- shellgame_mv_a 
-    '261125-104554', # --> B     -- shellgame_mv_a 
-    '261125-104705', # --> C     -- shellgame_mv_a 
-    '261125-104732', # --> A     -- shellgame_mv_a 
-    '261125-104759', # --> A     -- shellgame_mv_a 
-    '261125-104837', # --> C     -- shellgame_mv_a 
-    '261125-104917', # --> A     -- shellgame_mv_a 
-    '261125-104952', # --> A     -- shellgame_mv_a 
-    '261125-105943', # --> C     -- shellgame_mv_a 
-    '261125-110012', # --> C     -- shellgame_mv_a 
-    '261125-110038', # --> A     -- shellgame_mv_a 
-    '261125-110106', # --> A     -- shellgame_mv_a 
-    '261125-110135', # --> C     -- shellgame_mv_a 
-    '261125-110711', # --> A     -- shellgame_mv_a 
-    '261125-110736', # --> C     -- shellgame_mv_a 
-    '261125-110758', # --> C     -- shellgame_mv_a 
-    '261125-110830', # --> A     -- shellgame_mv_a 
-    '261125-110901', # --> B     -- shellgame_mv_a 
-    '261125-111934', # --> A     -- shellgame_mv_b 
-    '261125-112001', # --> C     -- shellgame_mv_b 
-    '261125-112026', # --> A     -- shellgame_mv_b 
-    '261125-112050', # --> B     -- shellgame_mv_b 
-    '261125-112116', # --> C     -- shellgame_mv_b 
-    '261125-112139', # --> A     -- shellgame_mv_b 
-    '261125-112205', # --> B     -- shellgame_mv_b 
-    '261125-112306', # --> C     -- shellgame_mv_b 
-    '261125-112333', # --> A     -- shellgame_mv_b 
-    '261125-112521', # --> C     -- shellgame_mv_b 
-    '261125-112540', # --> C     -- shellgame_mv_b 
-    '261125-114107', # --> C     -- shellgame_mv_c 
-    '261125-114146', # --> A     -- shellgame_mv_c 
-    '261125-114209', # --> C     -- shellgame_mv_c 
-    '261125-114232', # --> B     -- shellgame_mv_c 
-    '261125-114306', # --> C     -- shellgame_mv_c 
-    '261125-114327', # --> B     -- shellgame_mv_c 
-    '261125-114354', # --> C     -- shellgame_mv_c 
-    '261125-114427', # --> A     -- shellgame_mv_c 
-    '261125-114451', # --> A     -- shellgame_mv_c 
-    '261125-114516', # --> C     -- shellgame_mv_c 
-    '261125-114540', # --> B     -- shellgame_mv_c 
-    '261125-114606', # --> A     -- shellgame_mv_c 
+'261125-125558', # --> square -- which_shape_next_cam0_a 
+'261125-125633', # --> triangle -- which_shape_next_cam0_a 
+'261125-125913', # --> rectangle -- which_shape_next_cam0_a 
+'261125-130240', # --> circle -- which_shape_next_cam0_a 
+'261125-130305', # --> triangle -- which_shape_next_cam0_a 
+'261125-130345', # --> square -- which_shape_next_cam0_a 
+'261125-130412', # --> rectangle -- which_shape_next_cam0_b 
+'261125-130439', # --> rectangle -- which_shape_next_cam0_b 
+'261125-130458', # --> triangle -- which_shape_next_cam0_b 
+'261125-130522', # --> circle -- which_shape_next_cam0_b 
+'261125-130550', # --> rectangle -- which_shape_next_cam0_b 
+'261125-131157', # --> square -- which_shape_next_cam0_a 
+'261125-131216', # --> circle -- which_shape_next_cam0_a 
+'261125-131241', # --> square -- which_shape_next_cam0_a 
+'261125-131306', # --> triangle -- which_shape_next_cam0_a 
+'261125-131326', # --> square -- which_shape_next_cam0_a 
 ]
 print(len(vids_list))
 
@@ -69,39 +44,36 @@ client = OpenAI(
 
 
 system_prompt = (
-    "You are an expert multi-view visual object-tracking and spatial-temporal reasoning model. "
-    "You are provided with a single synchronized split-screen video showing two side-by-side camera views of the exact same event: "
-    "the LEFT half is 'cam0' and the RIGHT half is 'cam1'. "
-    "In 'cam1', there are three clearly marked positions: A, B, and C, each starting with an inverted cup. "
-    "At the start of the video, a puck is revealed under one of the cups in 'cam1'. "
-    "The cups are then moved out of 'cam1' into 'cam0', shuffled inside 'cam0', and finally returned to 'cam1' onto markers A, B, and C. "
-    "You must synthesize spatial and temporal cues across both camera views to continuously maintain the identity of the target cup across camera boundaries and determine its final resting position."
+    "You are an expert multi-view 3D spatial-temporal reasoning and object-tracking model. "
+    "You are provided with a single synchronized split-screen video showing two side-by-side camera views of the exact same physical event: "
+    "the LEFT half is 'cam0' (a bird's-eye top-down camera looking straight down at the top face of a 4-sided rectangular paper prism), "
+    "and the RIGHT half is 'cam1' (a table-level side camera looking horizontally at one vertical side face of the prism). "
+    "Each of the four longitudinal sides of the prism has a unique geometric shape drawn on it. "
+    "During the video, hands rotate the prism in consistent 90-degree turns around its longitudinal axis. "
+    "You must synthesize spatial and temporal cues across both camera views to determine the 3D orientation of the prism, "
+    "the direction of rotation, and which shape will appear on the top face ('cam0') after one additional 90-degree turn in the same direction."
 )
 
 user_prompt = """
-Analyze this synchronized split-screen video ('cam0' on the left, 'cam1' on the right) of a multi-view shell game and determine which position (A, B, or C) in 'cam1' hides the puck at the end of the video.
-
-Valid Positions: {"A", "B", "C"}
+Analyze this synchronized split-screen video ('cam0' bird's-eye top view on the left, 'cam1' table-level side view on the right) of a 4-sided paper prism being rotated, and predict which shape will appear on the top face in 'cam0' if the prism is rotated one more 90-degree turn in the exact same direction after the video ends.
 
 Instructions:
-1. Initial Reveal ('cam1' - Right): Identify the starting position (A, B, or C) where the puck is initially revealed under a cup at the beginning of the recording.
-2. Track the cup with the puck chronologically:
-  - Outbound Transition ('cam1' -> 'cam0'): Track the target cup as it leaves 'cam1' and enters 'cam0', noting its relative spatial order (e.g., left, middle, right) upon entering 'cam0'. 
-  - Shuffle Tracking ('cam0' - Left): Continuously track the physical target cup through every swap and movement inside 'cam0'. 
-  - Return Transition ('cam0' -> 'cam1'): Track the target cup as it exits 'cam0', re-enters 'cam1', and is placed onto one of the final markers (A, B, or C).
-3. State your final predicted position ("A", "B", or "C") where the puck is located at the end of the video.
-4. Provide a confidence score as a float between 0.0 and 1.0 denoting your certainty in the final predicted position (where 1.0 is completely certain and 0.33 is random guessing).
-5. State the exact number of frames you sampled and processed from the given video in integer format.
-6. Spatial Camera Setup Inference: Provide a single, concise sentence describing your best inference of the physical camera setup and the spatial position/orientation of 'cam0' relative to 'cam1' (e.g., adjacent adjacent top-down views, angled side-by-side cameras, or opposite-facing perspectives) based on how the cups and hands exit one frame and enter the other.
+1. Initial State: Identify the shape visible on the top face in 'cam0' and the shape visible on the side face in 'cam1' at the beginning of the video.
+2. Rotation Tracking: Track every 90-degree rotation step chronologically across both views, noting how faces move between 'cam0' (top) and 'cam1' (side) to establish the exact direction of rotation and the prism's 3D face adjacency.
+3. Final State at Video End: Identify the shape currently on the top face in 'cam0' and the shape currently on the side face in 'cam1' at the end of the recording.
+4. Next-Turn Prediction: Extrapolate one additional 90-degree rotation in the exact same direction from the final state, and state the single lowercase name of the shape (e.g., "triangle", "square", "rectangle", "circle") that will appear on the top face in 'cam0'.
+5. Metrics: Provide a confidence score (float between 0.0 and 1.0, where 1.0 is completely certain and 0.25 is random guessing among 4 sides), the exact integer number of video frames sampled and processed.
 
 Output strictly in JSON matching this schema:
 {
-  "initial_position": "<A, B, or C>",
-  "swap_sequence": "cam1:A -> enter_cam0:left -> cam0_swap:right -> return_cam1:B",
-  "predicted_position": "<A, B, or C>",
+  "initial_cam0_shape": "<shape>",
+  "initial_cam1_shape": "<shape>",
+  "rotation_sequence": "start(cam0:square, cam1:rectangle) -> turn1(cam0:rectangle, cam1:triangle)",
+  "final_cam0_shape": "<shape>",
+  "final_cam1_shape": "<shape>",
+  "predicted_next_cam0_shape": "<lowercase shape name>",
   "confidence": 0.0,
-  "frames_seen": 60,
-  "camera_setup_reasoning": "<One sentence describing the inferred physical position and orientation of cam0 relative to cam1>"
+  "frames_seen": 60
 }
 """
 
@@ -174,12 +146,15 @@ for video_name in pbar:
                 "completion_tokens": usage.completion_tokens if usage else None,
                 "total_tokens": usage.total_tokens if usage else None,
                 "cost": usage.cost if usage else None,
-                "initial_position": prediction_json.get("initial_position"),
-                "predicted_position": prediction_json.get("predicted_position"),
-                "confidence": float(prediction_json.get("confidence", 0.0)),
-                "swap_sequence": prediction_json.get("swap_sequence"),
+
+                'initial_cam0_shape': prediction_json.get("initial_cam0_shape"),
+                'initial_cam1_shape': prediction_json.get("initial_cam1_shape"),
+                'rotation_sequence': prediction_json.get("rotation_sequence"),
+                'final_cam0_shape': prediction_json.get("final_cam0_shape"),
+                'final_cam1_shape': prediction_json.get("final_cam1_shape"),
+                'predicted_next_cam0_shape': prediction_json.get("predicted_next_cam0_shape"),
+                "confidence": prediction_json.get("confidence"),
                 "frames_seen": prediction_json.get("frames_seen"),
-                "camera_setup_reasoning": prediction_json.get("camera_setup_reasoning"),
             }
 
             # Append result as a single JSON line
@@ -193,7 +168,7 @@ for video_name in pbar:
                 print(f"\n[!] [Attempt {attempt + 1}/3] {video_name} failed ({e}). Retrying in 7s...")
                 time.sleep(7)
             else:
-                print(f"[!] Skipping {video_name} after 3 failed attempts.")
+                print(f"[!!!] Skipping {video_name} after 3 failed attempts.")
 
 
             

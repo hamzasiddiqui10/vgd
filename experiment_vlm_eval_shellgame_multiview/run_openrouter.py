@@ -13,47 +13,22 @@ from tqdm import tqdm
 
 
 vids_list = [
-    '261125-104457', # --> C     -- shellgame_mv_a 
-    '261125-104554', # --> B     -- shellgame_mv_a 
-    '261125-104705', # --> C     -- shellgame_mv_a 
-    '261125-104732', # --> A     -- shellgame_mv_a 
-    '261125-104759', # --> A     -- shellgame_mv_a 
-    '261125-104837', # --> C     -- shellgame_mv_a 
-    '261125-104917', # --> A     -- shellgame_mv_a 
-    '261125-104952', # --> A     -- shellgame_mv_a 
-    '261125-105943', # --> C     -- shellgame_mv_a 
-    '261125-110012', # --> C     -- shellgame_mv_a 
-    '261125-110038', # --> A     -- shellgame_mv_a 
-    '261125-110106', # --> A     -- shellgame_mv_a 
-    '261125-110135', # --> C     -- shellgame_mv_a 
-    '261125-110711', # --> A     -- shellgame_mv_a 
-    '261125-110736', # --> C     -- shellgame_mv_a 
-    '261125-110758', # --> C     -- shellgame_mv_a 
-    '261125-110830', # --> A     -- shellgame_mv_a 
-    '261125-110901', # --> B     -- shellgame_mv_a 
-    '261125-111934', # --> A     -- shellgame_mv_b 
-    '261125-112001', # --> C     -- shellgame_mv_b 
-    '261125-112026', # --> A     -- shellgame_mv_b 
-    '261125-112050', # --> B     -- shellgame_mv_b 
-    '261125-112116', # --> C     -- shellgame_mv_b 
-    '261125-112139', # --> A     -- shellgame_mv_b 
-    '261125-112205', # --> B     -- shellgame_mv_b 
-    '261125-112306', # --> C     -- shellgame_mv_b 
-    '261125-112333', # --> A     -- shellgame_mv_b 
-    '261125-112521', # --> C     -- shellgame_mv_b 
-    '261125-112540', # --> C     -- shellgame_mv_b 
-    '261125-114107', # --> C     -- shellgame_mv_c 
-    '261125-114146', # --> A     -- shellgame_mv_c 
-    '261125-114209', # --> C     -- shellgame_mv_c 
-    '261125-114232', # --> B     -- shellgame_mv_c 
-    '261125-114306', # --> C     -- shellgame_mv_c 
-    '261125-114327', # --> B     -- shellgame_mv_c 
-    '261125-114354', # --> C     -- shellgame_mv_c 
-    '261125-114427', # --> A     -- shellgame_mv_c 
-    '261125-114451', # --> A     -- shellgame_mv_c 
-    '261125-114516', # --> C     -- shellgame_mv_c 
-    '261125-114540', # --> B     -- shellgame_mv_c 
-    '261125-114606', # --> A     -- shellgame_mv_c 
+'261125-104952',
+ '261125-110758',
+ '261125-110830',
+ '261125-112050',
+ '261125-112333',
+ '261125-112521',
+ '261125-112540',
+ '261125-114107',
+ '261125-114146',
+ '261125-114209',
+ '261125-114232',
+ '261125-114354',
+ '261125-114427',
+ '261125-114451',
+ '261125-114540',
+ '261125-114606',
 ]
 print(len(vids_list))
 
@@ -92,7 +67,6 @@ Instructions:
 3. State your final predicted position ("A", "B", or "C") where the puck is located at the end of the video.
 4. Provide a confidence score as a float between 0.0 and 1.0 denoting your certainty in the final predicted position (where 1.0 is completely certain and 0.33 is random guessing).
 5. State the exact number of frames you sampled and processed from the given video in integer format.
-6. Spatial Camera Setup Inference: Provide a single, concise sentence describing your best inference of the physical camera setup and the spatial position/orientation of 'cam0' relative to 'cam1' (e.g., adjacent adjacent top-down views, angled side-by-side cameras, or opposite-facing perspectives) based on how the cups and hands exit one frame and enter the other.
 
 Output strictly in JSON matching this schema:
 {
@@ -100,8 +74,7 @@ Output strictly in JSON matching this schema:
   "swap_sequence": "cam1:A -> enter_cam0:left -> cam0_swap:right -> return_cam1:B",
   "predicted_position": "<A, B, or C>",
   "confidence": 0.0,
-  "frames_seen": 60,
-  "camera_setup_reasoning": "<One sentence describing the inferred physical position and orientation of cam0 relative to cam1>"
+  "frames_seen": 60
 }
 """
 
@@ -114,7 +87,7 @@ print(user_prompt)
 videos_dir = 'data/combined_videos/'
 results_path = "data/vlm_eval_results/shellgame_predictions_gemini-3.8-flash-agentic.jsonl"
 
-pbar = tqdm(vids_list[1:], desc="Processing Videos")
+pbar = tqdm(vids_list, desc="Processing Videos")
 
 for video_name in pbar:
     # Make file path and load video in base64 format
@@ -123,7 +96,7 @@ for video_name in pbar:
         b64_video = base64.b64encode(f.read()).decode("utf-8")
 
     # system_prompts and user_prompt exactly same for all videos.
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             # API call
             start_time = time.time()
@@ -179,7 +152,7 @@ for video_name in pbar:
                 "confidence": float(prediction_json.get("confidence", 0.0)),
                 "swap_sequence": prediction_json.get("swap_sequence"),
                 "frames_seen": prediction_json.get("frames_seen"),
-                "camera_setup_reasoning": prediction_json.get("camera_setup_reasoning"),
+                "camera_setup_reasoning": prediction_json.get("camera_setup_reasoning", "disabled"),
             }
 
             # Append result as a single JSON line
@@ -189,11 +162,11 @@ for video_name in pbar:
             break
 
         except Exception as e:
-            if attempt < 2:
-                print(f"\n[!] [Attempt {attempt + 1}/3] {video_name} failed ({e}). Retrying in 7s...")
+            if attempt < 1:
+                print(f"\n[!] [Attempt {attempt + 1}/2] {video_name} failed ({e}). Retrying in 7s...")
                 time.sleep(7)
             else:
-                print(f"[!] Skipping {video_name} after 3 failed attempts.")
+                print(f"[!!!] Skipping {video_name} after 2 failed attempts.")
 
 
             
